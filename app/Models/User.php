@@ -53,4 +53,19 @@ class User extends Authenticatable
     {
         return $this->role === UserRole::CUSTOMER;
     }
+
+    public function profile()
+    {
+        return $this->hasOne(StaffProfile::class);
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class,'service_staff','staff_id','service_id');
+    }
+
+    public function staffProfile()
+    {
+        return $this->hasOne(StaffProfile::class);
+    }
 }
