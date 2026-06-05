@@ -61,11 +61,26 @@ class User extends Authenticatable
 
     public function services()
     {
-        return $this->belongsToMany(Service::class,'service_staff','staff_id','service_id');
+        return $this->belongsToMany(Service::class, 'service_staff', 'staff_id', 'service_id');
     }
 
     public function staffProfile()
     {
         return $this->hasOne(StaffProfile::class);
+    }
+
+    public function workingHours()
+    {
+        return $this->hasMany(WorkingHour::class, 'staff_id');
+    }
+
+    public function customerAppointments()
+    {
+        return $this->hasMany(Appointment::class, 'customer_id');
+    }
+
+    public function staffAppointments()
+    {
+        return $this->hasMany(Appointment::class, 'staff_id');
     }
 }
