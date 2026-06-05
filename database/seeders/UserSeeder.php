@@ -19,12 +19,21 @@ class UserSeeder extends Seeder
             ]
         );
 
-        User::updateOrCreate(
+        $staff = User::updateOrCreate(
             ['email' => 'staff@example.com'],
             [
                 'name' => 'Staff User',
                 'password' => bcrypt('password'),
                 'role' => UserRole::STAFF,
+            ]
+        );
+
+        $staff->staffProfile()->updateOrCreate(
+            [],
+            [
+                'phone' => '8138927654',
+                'bio' => 'Experienced professional',
+                'experience_years' => 5,
             ]
         );
     }
