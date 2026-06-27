@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -32,22 +33,33 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        if (! Auth::attempt($validated)) {
+            if (!Auth::attempt($validated)) {
+                return response()->json([
+                    'message' => 'Invalid credentials',
+                ], 401);
+            }
+
+            $user = $request->user();
+
+            $token = $user->createToken('api_token')->plainTextToken;
+
             return response()->json([
-                'message' => 'Invalid credentials',
-            ], 401);
+                'user' => new UserResource($user),
+                'token' => $token,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Login failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'message' => 'An error occurred while logging in.',
+            ], 500);
         }
-
-        $user = $request->user();
-
-        $token = $user->createToken('api_token')->plainTextToken;
-
-        return response()->json([
-            'user' => new UserResource($user),
-            'token' => $token,
-        ]);
     }
 
     public function logout(Request $request): JsonResponse

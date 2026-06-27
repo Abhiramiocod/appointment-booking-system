@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Staff\Appointment;
+namespace App\actions\Staff\Appointment;
 
 use App\Enums\AppointmentStatus;
 use App\Models\Appointment;

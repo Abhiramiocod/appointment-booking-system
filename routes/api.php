@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AppointmentController as AdminAppointmentController;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Customer\AppointmentController as CustomerAppointmentController;
 use App\Http\Controllers\Api\Customer\CustomerServiceController;
 use App\Http\Controllers\Api\Customer\DashboardController as CustomerDashboardController;
