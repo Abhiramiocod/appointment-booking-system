@@ -57,4 +57,14 @@ class AppointmentPolicy
     {
         return $user->role === UserRole::ADMIN;
     }
+
+    public function updateAdmin(User $user, Appointment $appointment): bool
+    {
+        return $user->role === UserRole::ADMIN;
+    }
+
+    public function deleteAdmin(User $user, Appointment $appointment): bool
+    {
+        return $user->role === UserRole::ADMIN;
+    }
 }

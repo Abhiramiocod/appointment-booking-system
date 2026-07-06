@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\IndexAppointmentRequest;
+use App\Http\Requests\Admin\UpdateAppointmentRequest;
 use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
 class AppointmentController extends Controller
@@ -54,5 +55,27 @@ class AppointmentController extends Controller
         return new AppointmentResource(
             $appointment->load(['customer', 'staff', 'service'])
         );
+    }
+
+    public function update(UpdateAppointmentRequest $request, Appointment $appointment)
+    {
+        Gate::authorize('updateAdmin', $appointment);
+
+        $appointment->update($request->validated());
+
+        return new AppointmentResource(
+            $appointment->fresh()->load(['customer', 'staff', 'service'])
+        );
+    }
+
+    public function destroy(Appointment $appointment): JsonResponse
+    {
+        Gate::authorize('deleteAdmin', $appointment);
+
+        $appointment->delete();
+
+        return response()->json([
+            'message' => 'Appointment deleted successfully.',
+        ]);
     }
 }
