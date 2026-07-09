@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
                 'name' => 'Admin User',
                 'password' => bcrypt('password'),
                 'role' => UserRole::ADMIN,
+                'image' => 'images/users/image.jpg',
             ]
         );
 
@@ -25,6 +26,7 @@ class UserSeeder extends Seeder
                 'name' => 'Staff User',
                 'password' => bcrypt('password'),
                 'role' => UserRole::STAFF,
+                'image' => 'images/users/staff.jpg',
             ]
         );
 

@@ -32,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('appointments')->group(function () {
             Route::get('/', [AdminAppointmentController::class, 'index']);
             Route::get('{appointment}', [AdminAppointmentController::class, 'show']);
+            Route::patch('{appointment}',[AdminAppointmentController::class, 'update']);
+            Route::delete('{appointment}',[AdminAppointmentController::class, 'destroy']);
         });
     });
 
