@@ -45,7 +45,7 @@ class StoreAppointmentAction
         $alreadyBooked = Appointment::query()
             ->where('staff_id', $staff->id)
             ->whereDate('appointment_date', $appointmentDate)
-            ->where('start_time', $startTime . ':00')
+            ->where('start_time', $startTime.':00')
             ->whereNotIn('status', [
                 AppointmentStatus::CANCELLED,
             ])
@@ -60,7 +60,7 @@ class StoreAppointmentAction
             'staff_id' => $staff->id,
             'service_id' => $service->id,
             'appointment_date' => $appointmentDate,
-            'start_time' => $startTime . ':00',
+            'start_time' => $startTime.':00',
             'end_time' => $endTime,
             'status' => AppointmentStatus::PENDING,
             'notes' => $notes,

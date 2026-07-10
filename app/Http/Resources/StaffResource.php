@@ -15,7 +15,7 @@ class StaffResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            
+
             'profile' => [
                 'phone' => $this->staffProfile?->phone,
                 'bio' => $this->staffProfile?->bio,

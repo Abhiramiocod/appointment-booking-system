@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Models\WorkingHour;
 use Illuminate\Database\Seeder;
-use App\Enums\UserRole;
 
 class WorkingHourSeeder extends Seeder
 {
@@ -26,7 +26,7 @@ class WorkingHourSeeder extends Seeder
                     [
                         'start_time' => '09:00:00',
                         'end_time' => '17:00:00',
-                        'is_available' => $day !== 0, 
+                        'is_available' => $day !== 0,
                     ]
                 );
             }

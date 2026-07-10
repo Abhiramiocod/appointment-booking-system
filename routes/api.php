@@ -1,12 +1,13 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AppointmentController as AdminAppointmentController;
+use App\Http\Controllers\Api\Admin\ServicesController;
+use App\Http\Controllers\Api\Admin\StaffController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Customer\AppointmentController as CustomerAppointmentController;
+use App\Http\Controllers\Api\Customer\AvailabilityController;
 use App\Http\Controllers\Api\Customer\CustomerServiceController;
 use App\Http\Controllers\Api\Customer\DashboardController as CustomerDashboardController;
-use App\Http\Controllers\Api\Admin\ServicesController;
-use App\Http\Controllers\Api\Customer\AvailabilityController;
 use App\Http\Controllers\Api\Staff\AppointmentController as StaffAppointmentController;
 use App\Http\Controllers\Api\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Api\Staff\StaffProfileController;
@@ -23,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('admin')->middleware('admin')->group(function () {
         Route::prefix('services')->group(function () {
             Route::get('/', [ServicesController::class, 'index']);
-            Route::post('/',[ServicesController::class,'store']);
+            Route::post('/', [ServicesController::class, 'store']);
             Route::get('{service}', [ServicesController::class, 'show']);
             Route::put('{service}', [ServicesController::class, 'update']);
             Route::delete('{service}', [ServicesController::class, 'destroy']);
@@ -31,9 +32,18 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::prefix('appointments')->group(function () {
             Route::get('/', [AdminAppointmentController::class, 'index']);
+            Route::post('/', [AdminAppointmentController::class, 'store']);
             Route::get('{appointment}', [AdminAppointmentController::class, 'show']);
-            Route::patch('{appointment}',[AdminAppointmentController::class, 'update']);
-            Route::delete('{appointment}',[AdminAppointmentController::class, 'destroy']);
+            Route::patch('{appointment}', [AdminAppointmentController::class, 'update']);
+            Route::delete('{appointment}', [AdminAppointmentController::class, 'destroy']);
+        });
+        Route::prefix('staff')->group(function () {
+            Route::get('/', [StaffController::class, 'index']);
+            Route::post('/', [StaffController::class, 'store']);
+            Route::get('/search', [StaffController::class, 'search']);
+            Route::get('{staff}', [StaffController::class, 'show']);
+            Route::put('{staff}', [StaffController::class, 'update']);
+            Route::delete('{staff}', [StaffController::class, 'destroy']);
         });
     });
 

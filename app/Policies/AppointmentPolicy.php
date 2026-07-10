@@ -67,4 +67,9 @@ class AppointmentPolicy
     {
         return $user->role === UserRole::ADMIN;
     }
+
+    public function createAdmin(User $user): bool
+    {
+        return $user->role === UserRole::ADMIN;
+    }
 }

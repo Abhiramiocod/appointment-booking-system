@@ -16,7 +16,7 @@ class StaffMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (! in_array($request->user()->role, [UserRole::STAFF,])) {
+        if (! in_array($request->user()->role, [UserRole::STAFF])) {
             abort(403);
         }
 

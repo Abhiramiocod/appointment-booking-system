@@ -14,7 +14,7 @@ class StaffProfileController extends Controller
     {
         $profile = auth()->user()->staffProfile;
 
-        abort_if(!$profile, 404, 'Profile not found.');
+        abort_if(! $profile, 404, 'Profile not found.');
 
         return new StaffProfileResource($profile);
     }
@@ -23,7 +23,7 @@ class StaffProfileController extends Controller
     {
         if (auth()->user()->staffProfile) {
             return response()->json([
-                'message' => 'Profile already exists.'
+                'message' => 'Profile already exists.',
             ], 422);
         }
 
@@ -38,7 +38,7 @@ class StaffProfileController extends Controller
     {
         $profile = auth()->user()->staffProfile;
 
-        abort_if(!$profile, 404, 'Profile not found.');
+        abort_if(! $profile, 404, 'Profile not found.');
 
         $profile->update($request->validated());
 

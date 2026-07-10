@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Enums\UserRole;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 

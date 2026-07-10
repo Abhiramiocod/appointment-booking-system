@@ -8,7 +8,6 @@ use App\Http\Requests\Services\UpdateServiceRequest;
 use App\Http\Resources\ServiceResource;
 use App\Models\Service;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ServicesController extends Controller
 {
@@ -34,7 +33,8 @@ class ServicesController extends Controller
         return new ServiceResource($service);
     }
 
-    public function update(UpdateServiceRequest $request,Service $service): JsonResponse {
+    public function update(UpdateServiceRequest $request, Service $service): JsonResponse
+    {
         $validated = $request->validated();
 
         if (isset($validated['name'])) {

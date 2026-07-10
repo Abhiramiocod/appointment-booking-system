@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class IndexAppointmentRequest extends FormRequest
@@ -20,8 +19,12 @@ class IndexAppointmentRequest extends FormRequest
             'staff_id' => ['nullable', 'integer', 'exists:users,id'],
             'service_id' => ['nullable', 'integer', 'exists:services,id'],
             'appointment_date' => ['nullable', 'date'],
-            'sort_by' => ['nullable', 'in:appointment_date,created_at'],
+            'date_from' => ['nullable', 'date'],
+            'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
+            'search' => ['nullable', 'string', 'max:255'],
+            'sort_by' => ['nullable', 'in:appointment_date,created_at,status'],
             'sort_dir' => ['nullable', 'in:asc,desc'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
     }
 }

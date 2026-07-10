@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api\Customer;
 
-use App\Actions\Customer\Appointment\StoreAppointmentAction;
 use App\Actions\Customer\Appointment\CancelAppointmentAction;
+use App\Actions\Customer\Appointment\StoreAppointmentAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\StoreAppointmentRequest;
 use App\Http\Resources\AppointmentResource;

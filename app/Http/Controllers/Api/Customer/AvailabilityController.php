@@ -12,7 +12,8 @@ use Carbon\Carbon;
 
 class AvailabilityController extends Controller
 {
-    public function availableSlots(AvailableSlotsRequest $request,User $staff) {
+    public function availableSlots(AvailableSlotsRequest $request, User $staff)
+    {
         $service = Service::findOrFail(
             $request->service_id
         );
@@ -20,7 +21,7 @@ class AvailabilityController extends Controller
         // Verify staff provides this service
         if (! $staff->services()->where('services.id', $service->id)->exists()) {
             return response()->json([
-                'message' => 'Staff does not provide this service.'
+                'message' => 'Staff does not provide this service.',
             ], 422);
         }
 
@@ -33,7 +34,7 @@ class AvailabilityController extends Controller
 
         if (! $workingHour) {
             return response()->json([
-                'data' => []
+                'data' => [],
             ]);
         }
 
@@ -42,11 +43,11 @@ class AvailabilityController extends Controller
         $slots = [];
 
         $start = Carbon::parse(
-            $date->toDateString() . ' ' . $workingHour->start_time
+            $date->toDateString().' '.$workingHour->start_time
         );
 
         $end = Carbon::parse(
-            $date->toDateString() . ' ' . $workingHour->end_time
+            $date->toDateString().' '.$workingHour->end_time
         );
 
         while (

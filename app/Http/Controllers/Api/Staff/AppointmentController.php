@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Api\Staff;
 
 use App\Actions\Staff\Appointment\CancelAppointmentAction;
-use App\Actions\Staff\Appointment\ConfirmAppointmentAction;
 use App\Actions\Staff\Appointment\CompleteAppointmentAction;
+use App\Actions\Staff\Appointment\ConfirmAppointmentAction;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -31,7 +32,7 @@ class AppointmentController extends Controller
     public function confirm(
         Appointment $appointment,
         ConfirmAppointmentAction $action
-    ): AppointmentResource|\Illuminate\Http\JsonResponse {
+    ): AppointmentResource|JsonResponse {
         Gate::authorize('confirmStaff', $appointment);
 
         try {
@@ -50,7 +51,7 @@ class AppointmentController extends Controller
     public function complete(
         Appointment $appointment,
         CompleteAppointmentAction $action
-    ): AppointmentResource|\Illuminate\Http\JsonResponse {
+    ): AppointmentResource|JsonResponse {
         Gate::authorize('completeStaff', $appointment);
 
         try {
@@ -69,7 +70,7 @@ class AppointmentController extends Controller
     public function cancel(
         Appointment $appointment,
         CancelAppointmentAction $action
-    ): AppointmentResource|\Illuminate\Http\JsonResponse {
+    ): AppointmentResource|JsonResponse {
         Gate::authorize('cancelStaff', $appointment);
 
         $appointment = $action->execute($appointment);

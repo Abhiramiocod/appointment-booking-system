@@ -33,7 +33,8 @@ class ServicesController extends Controller
         return new ServiceResource($service);
     }
 
-    public function update(UpdateServiceRequest $request,Service $service): JsonResponse {
+    public function update(UpdateServiceRequest $request, Service $service): JsonResponse
+    {
         $service->update($request->validated());
 
         return response()->json([
@@ -42,9 +43,9 @@ class ServicesController extends Controller
         ]);
     }
 
-   public function destroy(Service $service): JsonResponse
+    public function destroy(Service $service): JsonResponse
     {
-        
+
         $service->delete();
 
         return response()->json([
