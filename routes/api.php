@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AppointmentController as AdminAppointmentController;
+use App\Http\Controllers\Api\Admin\CustomerController;
 use App\Http\Controllers\Api\Admin\ServicesController;
 use App\Http\Controllers\Api\Admin\StaffController;
 use App\Http\Controllers\Api\Auth\AuthController;
@@ -44,6 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('{staff}', [StaffController::class, 'show']);
             Route::put('{staff}', [StaffController::class, 'update']);
             Route::delete('{staff}', [StaffController::class, 'destroy']);
+        });
+        Route::prefix('customers')->group(function () {
+            Route::get('/', [CustomerController::class, 'index']);
         });
     });
 
