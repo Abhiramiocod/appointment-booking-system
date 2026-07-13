@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\AppointmentController as AdminAppointmentController;
 use App\Http\Controllers\Api\Admin\CustomerController;
 use App\Http\Controllers\Api\Admin\ServicesController;
+use App\Http\Controllers\Api\Admin\StaffApplicationController as AdminStaffApplicationController;
 use App\Http\Controllers\Api\Admin\StaffController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Customer\AppointmentController as CustomerAppointmentController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Api\Customer\CustomerServiceController;
 use App\Http\Controllers\Api\Customer\DashboardController as CustomerDashboardController;
 use App\Http\Controllers\Api\Staff\AppointmentController as StaffAppointmentController;
 use App\Http\Controllers\Api\Staff\DashboardController as StaffDashboardController;
+use App\Http\Controllers\Api\Staff\StaffApplicationController;
 use App\Http\Controllers\Api\Staff\StaffProfileController;
 use App\Http\Controllers\Api\Staff\StaffServiceController;
 use App\Http\Controllers\Api\Staff\WorkingHourController;
@@ -18,11 +20,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+Route::prefix('staff')->group(function () {
+    Route::post('/apply', [StaffApplicationController::class, 'store']);
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::prefix('admin')->middleware('admin')->group(function () {
+
         Route::prefix('services')->group(function () {
             Route::get('/', [ServicesController::class, 'index']);
             Route::post('/', [ServicesController::class, 'store']);
@@ -38,7 +44,17 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::patch('{appointment}', [AdminAppointmentController::class, 'update']);
             Route::delete('{appointment}', [AdminAppointmentController::class, 'destroy']);
         });
+
         Route::prefix('staff')->group(function () {
+
+             Route::prefix('requests')->group(function () {
+                Route::get('/', [AdminStaffApplicationController::class, 'index']);
+                Route::get('{staffApplication}', [AdminStaffApplicationController::class, 'show']);
+                Route::patch('{staffApplication}/approve', [AdminStaffApplicationController::class, 'approve']);
+                Route::patch('{staffApplication}/reject', [AdminStaffApplicationController::class, 'reject']);
+                Route::delete('{staffApplication}', [AdminStaffApplicationController::class, 'destroy']);
+            });
+            // Staff CRUD
             Route::get('/', [StaffController::class, 'index']);
             Route::post('/', [StaffController::class, 'store']);
             Route::get('/search', [StaffController::class, 'search']);
@@ -46,6 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('{staff}', [StaffController::class, 'update']);
             Route::delete('{staff}', [StaffController::class, 'destroy']);
         });
+
         Route::prefix('customers')->group(function () {
             Route::get('/', [CustomerController::class, 'index']);
         });

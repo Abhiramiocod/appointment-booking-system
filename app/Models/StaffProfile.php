@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EmploymentStatus;
 use Illuminate\Database\Eloquent\Model;
 
 class StaffProfile extends Model
@@ -13,6 +14,10 @@ class StaffProfile extends Model
         'experience_years',
         'profile_photo',
     ];
+
+    protected $casts = [
+    'employment_status' => EmploymentStatus::class,
+];
 
     public function user()
     {

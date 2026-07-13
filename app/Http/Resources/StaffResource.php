@@ -14,13 +14,27 @@ class StaffResource extends JsonResource
     {
         return [
             'id' => $this->id,
+
             'name' => $this->name,
+
+            'email' => $this->email,
+
+            'role' => $this->role->value,
+
+            'created_at' => $this->created_at?->toDateTimeString(),
 
             'profile' => [
                 'phone' => $this->staffProfile?->phone,
+
                 'bio' => $this->staffProfile?->bio,
+
                 'experience_years' => $this->staffProfile?->experience_years,
-                'profile_image' => $this->staffProfile?->profile_image,
+
+                'employment_status' => $this->staffProfile?->employment_status,
+
+                'profile_photo' => $this->staffProfile?->profile_photo
+                    ? asset($this->staffProfile->profile_photo)
+                    : null,
             ],
         ];
     }

@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreStaffRequest;
 use App\Http\Requests\Admin\UpdateStaffRequest;
+use App\Http\Resources\StaffResource;
 use App\Http\Resources\StaffSearchResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -46,7 +47,7 @@ class StaffController extends Controller
                 $request->input('per_page', 15)
             );
 
-        return UserResource::collection($staff);
+        return StaffResource::collection($staff);
     }
 
     /**
@@ -64,7 +65,7 @@ class StaffController extends Controller
             'image' => $request->image,
         ]);
 
-        return new UserResource($staff);
+        return new StaffResource($staff);
     }
 
     /**
@@ -76,7 +77,7 @@ class StaffController extends Controller
 
         abort_if($staff->role !== UserRole::STAFF, 404);
 
-        return new UserResource($staff);
+        return new StaffResource($staff);
     }
 
     /**

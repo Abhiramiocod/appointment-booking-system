@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->integer('experience_years')->nullable();
             $table->string('profile_photo')->nullable();
+            $table->string('employment_status')->nullable();
             $table->timestamps();
         });
     }
