@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\AppointmentStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Appointment extends Model
 {
@@ -40,4 +41,9 @@ class Appointment extends Model
     {
         return $this->belongsTo(Service::class);
     }
+
+    public function review(): HasOne
+{
+    return $this->hasOne(StaffReview::class);
+}
 }
