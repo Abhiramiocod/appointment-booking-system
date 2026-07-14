@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('staff_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
+            $table->foreignId('designation_id')->nullable()->constrained()->nullOnDelete();
             $table->string('phone')->nullable();
             $table->text('bio')->nullable();
             $table->integer('experience_years')->nullable();

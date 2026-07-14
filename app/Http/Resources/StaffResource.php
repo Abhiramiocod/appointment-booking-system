@@ -32,6 +32,10 @@ class StaffResource extends JsonResource
 
                 'employment_status' => $this->staffProfile?->employment_status,
 
+                'designation' => $this->staffProfile?->designation
+        ? new DesignationResource($this->staffProfile->designation)
+        : null,
+
                 'profile_photo' => $this->staffProfile?->profile_photo
                     ? asset($this->staffProfile->profile_photo)
                     : null,

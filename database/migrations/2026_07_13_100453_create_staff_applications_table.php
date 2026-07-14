@@ -18,26 +18,15 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone');
-
-            $table->string('status')
-                ->default(StaffApplicationStatus::PENDING->value);
-
+            $table->foreignId('designation_id')->constrained()->nullOnDelete();
+            $table->text('cover_letter')->nullable();
+            $table->unsignedTinyInteger('experience_years')->nullable();
+            $table->string('status')->default(StaffApplicationStatus::PENDING->value);
             $table->text('admin_notes')->nullable();
-
-            $table->foreignId('approved_by')
-                ->nullable()
-                ->constrained('users')
-                ->nullOnDelete();
-
+            $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('approved_at')->nullable();
-
-            $table->foreignId('rejected_by')
-                ->nullable()
-                ->constrained('users')
-                ->nullOnDelete();
-
+            $table->foreignId('rejected_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('rejected_at')->nullable();
-
             $table->timestamps();
         });
     }

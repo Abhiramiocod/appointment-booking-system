@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Customer\CustomerServiceController;
 use App\Http\Controllers\Api\Customer\DashboardController as CustomerDashboardController;
 use App\Http\Controllers\Api\Staff\AppointmentController as StaffAppointmentController;
 use App\Http\Controllers\Api\Staff\DashboardController as StaffDashboardController;
+use App\Http\Controllers\Api\Staff\DesignationController;
 use App\Http\Controllers\Api\Staff\StaffApplicationController;
 use App\Http\Controllers\Api\Staff\StaffProfileController;
 use App\Http\Controllers\Api\Staff\StaffServiceController;
@@ -22,6 +23,7 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::prefix('staff')->group(function () {
     Route::post('/apply', [StaffApplicationController::class, 'store']);
+    Route::get('/designations', [DesignationController::class, 'index']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -47,17 +49,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::prefix('staff')->group(function () {
 
-             Route::prefix('requests')->group(function () {
+            Route::prefix('requests')->group(function () {
                 Route::get('/', [AdminStaffApplicationController::class, 'index']);
                 Route::get('{staffApplication}', [AdminStaffApplicationController::class, 'show']);
                 Route::patch('{staffApplication}/approve', [AdminStaffApplicationController::class, 'approve']);
                 Route::patch('{staffApplication}/reject', [AdminStaffApplicationController::class, 'reject']);
-                Route::delete('{staffApplication}', [AdminStaffApplicationController::class, 'destroy']);
             });
             // Staff CRUD
             Route::get('/', [StaffController::class, 'index']);
             Route::post('/', [StaffController::class, 'store']);
             Route::get('/search', [StaffController::class, 'search']);
+            Route::patch('{staff}/status', [StaffController::class, 'updateEmploymentStatus']);
             Route::get('{staff}', [StaffController::class, 'show']);
             Route::put('{staff}', [StaffController::class, 'update']);
             Route::delete('{staff}', [StaffController::class, 'destroy']);

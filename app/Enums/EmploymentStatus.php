@@ -9,3 +9,4 @@ enum EmploymentStatus: string
     case ON_LEAVE = 'on_leave';
     case TERMINATED = 'terminated';
 }
+    

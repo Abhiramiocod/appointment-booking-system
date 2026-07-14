@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreStaffRequest;
+use App\Http\Requests\Admin\UpdateEmploymentStatusRequest;
 use App\Http\Requests\Admin\UpdateStaffRequest;
 use App\Http\Resources\StaffResource;
 use App\Http\Resources\StaffSearchResource;
@@ -144,4 +145,31 @@ class StaffController extends Controller
 
         return StaffSearchResource::collection($staff);
     }
+
+    public function updateEmploymentStatus(
+    UpdateEmploymentStatusRequest $request,
+    User $staff
+)
+{
+    Gate::authorize('update', $staff);
+
+    abort_if($staff->role !== UserRole::STAFF, 404);
+
+    $staffProfile = $staff->staffProfile;
+
+    if (! $staffProfile) {
+        return response()->json([
+            'message' => 'Staff profile not found.',
+        ], 404);
+    }
+
+    $staffProfile->update([
+        'employment_status' => $request->employment_status,
+    ]);
+
+    return response()->json([
+        'message' => 'Employment status updated successfully.',
+        'data' => new StaffResource($staff->fresh()),
+    ]);
+}
 }

@@ -84,7 +84,10 @@ class StaffApplicationController extends Controller
             ]);
 
             $staff->staffProfile()->create([
+                'designation_id' => $staffApplication->designation_id,
                 'phone' => $staffApplication->phone,
+                'bio' => $staffApplication->cover_letter,
+                'experience_years' => $staffApplication->experience_years,
                 'employment_status' => EmploymentStatus::ACTIVE,
             ]);
 
@@ -136,20 +139,6 @@ class StaffApplicationController extends Controller
 
         return response()->json([
             'message' => 'Application rejected successfully.',
-        ]);
-    }
-
-    /**
-     * Delete an application.
-     */
-    public function destroy(StaffApplication $staffApplication)
-    {
-        Gate::authorize('delete', $staffApplication);
-
-        $staffApplication->delete();
-
-        return response()->json([
-            'message' => 'Application deleted successfully.',
         ]);
     }
 }

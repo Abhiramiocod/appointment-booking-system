@@ -13,6 +13,9 @@ class StaffApplication extends Model
         'email',
         'phone',
         'status',
+        'designation_id',
+        'cover_letter',
+        'experience_years',
         'admin_notes',
         'approved_by',
         'approved_at',
@@ -34,5 +37,15 @@ class StaffApplication extends Model
     public function rejector(): BelongsTo
     {
         return $this->belongsTo(User::class, 'rejected_by');
+    }
+
+    public function designation(): BelongsTo
+    {
+        return $this->belongsTo(Designation::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'email', 'email');
     }
 }

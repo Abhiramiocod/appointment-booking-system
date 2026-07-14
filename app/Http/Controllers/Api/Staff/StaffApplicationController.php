@@ -43,7 +43,10 @@ class StaffApplicationController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
+            'designation_id' => $request->designation_id,
             'status' => StaffApplicationStatus::PENDING,
+            'cover_letter' => $request->cover_letter,
+            'experience_years' => $request->experience_years,
         ]);
 
         return response()->json([
