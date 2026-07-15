@@ -75,6 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/profile', [StaffProfileController::class, 'show']);
         Route::post('/profile', [StaffProfileController::class, 'store']);
         Route::put('/profile', [StaffProfileController::class, 'update']);
+        Route::put('/change-password', [StaffProfileController::class, 'changePassword']);
 
         Route::prefix('services')->group(function () {
             Route::get('/', [StaffServiceController::class, 'index']);

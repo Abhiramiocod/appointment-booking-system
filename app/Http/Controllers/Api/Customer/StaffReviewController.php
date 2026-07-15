@@ -21,30 +21,30 @@ class StaffReviewController extends Controller
         // Customer can only review their own appointment
         if ($appointment->customer_id !== auth()->id()) {
             return response()->json([
-                'message' => 'Unauthorized.'
+                'message' => 'Unauthorized.',
             ], 403);
         }
 
         // Appointment must be completed
         if ($appointment->status !== 'completed') {
             return response()->json([
-                'message' => 'You can only review completed appointments.'
+                'message' => 'You can only review completed appointments.',
             ], 422);
         }
 
         // Prevent duplicate reviews
         if ($appointment->review()->exists()) {
             return response()->json([
-                'message' => 'You have already reviewed this appointment.'
+                'message' => 'You have already reviewed this appointment.',
             ], 422);
         }
 
         $review = StaffReview::create([
             'appointment_id' => $appointment->id,
-            'staff_id'       => $appointment->staff_id,
-            'customer_id'    => auth()->id(),
-            'rating'         => $request->rating,
-            'review'         => $request->review,
+            'staff_id' => $appointment->staff_id,
+            'customer_id' => auth()->id(),
+            'rating' => $request->rating,
+            'review' => $request->review,
         ]);
 
         return response()->json([
@@ -62,7 +62,7 @@ class StaffReviewController extends Controller
     ): JsonResponse {
         if ($review->customer_id !== auth()->id()) {
             return response()->json([
-                'message' => 'Unauthorized.'
+                'message' => 'Unauthorized.',
             ], 403);
         }
 
@@ -85,14 +85,14 @@ class StaffReviewController extends Controller
     ): JsonResponse {
         if ($review->customer_id !== auth()->id()) {
             return response()->json([
-                'message' => 'Unauthorized.'
+                'message' => 'Unauthorized.',
             ], 403);
         }
 
         $review->delete();
 
         return response()->json([
-            'message' => 'Review deleted successfully.'
+            'message' => 'Review deleted successfully.',
         ]);
     }
 }

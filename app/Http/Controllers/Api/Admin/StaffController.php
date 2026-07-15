@@ -147,29 +147,28 @@ class StaffController extends Controller
     }
 
     public function updateEmploymentStatus(
-    UpdateEmploymentStatusRequest $request,
-    User $staff
-)
-{
-    Gate::authorize('update', $staff);
+        UpdateEmploymentStatusRequest $request,
+        User $staff
+    ) {
+        Gate::authorize('update', $staff);
 
-    abort_if($staff->role !== UserRole::STAFF, 404);
+        abort_if($staff->role !== UserRole::STAFF, 404);
 
-    $staffProfile = $staff->staffProfile;
+        $staffProfile = $staff->staffProfile;
 
-    if (! $staffProfile) {
+        if (! $staffProfile) {
+            return response()->json([
+                'message' => 'Staff profile not found.',
+            ], 404);
+        }
+
+        $staffProfile->update([
+            'employment_status' => $request->employment_status,
+        ]);
+
         return response()->json([
-            'message' => 'Staff profile not found.',
-        ], 404);
+            'message' => 'Employment status updated successfully.',
+            'data' => new StaffResource($staff->fresh()),
+        ]);
     }
-
-    $staffProfile->update([
-        'employment_status' => $request->employment_status,
-    ]);
-
-    return response()->json([
-        'message' => 'Employment status updated successfully.',
-        'data' => new StaffResource($staff->fresh()),
-    ]);
-}
 }

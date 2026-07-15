@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class StaffApplicationController extends Controller
@@ -97,6 +98,11 @@ class StaffApplicationController extends Controller
                 'approved_at' => now(),
             ]);
 
+            Log::info('New staff account approved.', [
+                'email' => $staff->email,
+                'temporary_password' => $temporaryPassword,
+            ]);
+
             DB::commit();
 
             return response()->json([
@@ -104,7 +110,6 @@ class StaffApplicationController extends Controller
                 'temporary_password' => $temporaryPassword,
                 'staff' => $staff,
             ]);
-
         } catch (\Throwable $e) {
 
             DB::rollBack();

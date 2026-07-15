@@ -43,7 +43,7 @@ class Appointment extends Model
     }
 
     public function review(): HasOne
-{
-    return $this->hasOne(StaffReview::class);
-}
+    {
+        return $this->hasOne(StaffReview::class);
+    }
 }

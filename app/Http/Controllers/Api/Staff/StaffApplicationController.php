@@ -20,8 +20,8 @@ class StaffApplicationController extends Controller
         // Don't allow existing staff to apply again
         if (
             User::where('email', $request->email)
-            ->where('role', UserRole::STAFF)
-            ->exists()
+                ->where('role', UserRole::STAFF)
+                ->exists()
         ) {
             return response()->json([
                 'message' => 'A staff account already exists with this email.',
@@ -31,8 +31,8 @@ class StaffApplicationController extends Controller
         // Prevent duplicate pending applications
         if (
             StaffApplication::where('email', $request->email)
-            ->where('status', StaffApplicationStatus::PENDING)
-            ->exists()
+                ->where('status', StaffApplicationStatus::PENDING)
+                ->exists()
         ) {
             return response()->json([
                 'message' => 'A pending application already exists for this email.',

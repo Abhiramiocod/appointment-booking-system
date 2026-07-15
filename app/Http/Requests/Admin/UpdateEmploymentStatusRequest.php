@@ -23,9 +23,9 @@ class UpdateEmploymentStatusRequest extends FormRequest
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-{
-    return [
-        'employment_status' => ['required', new Enum(EmploymentStatus::class)],
-    ];
-}
+    {
+        return [
+            'employment_status' => ['required', new Enum(EmploymentStatus::class)],
+        ];
+    }
 }
