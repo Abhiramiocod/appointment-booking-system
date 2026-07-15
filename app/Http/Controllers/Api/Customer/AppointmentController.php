@@ -83,4 +83,40 @@ class AppointmentController extends Controller
             ], 422);
         }
     }
+
+    public function acceptReschedule(Request $request, Appointment $appointment): AppointmentResource|JsonResponse
+    {
+        abort_if($appointment->customer_id !== $request->user()->id, 403, 'Unauthorized.');
+        abort_if($appointment->status !== \App\Enums\AppointmentStatus::RESCHEDULE_REQUESTED, 400, 'No reschedule request found.');
+
+        $appointment->update([
+            'appointment_date' => $appointment->proposed_date,
+            'start_time' => $appointment->proposed_time,
+            'status' => \App\Enums\AppointmentStatus::CONFIRMED,
+            'proposed_date' => null,
+            'proposed_time' => null,
+            'proposed_note' => null,
+        ]);
+
+        return new AppointmentResource(
+            $appointment->load(['customer', 'staff', 'service'])
+        );
+    }
+
+    public function declineReschedule(Request $request, Appointment $appointment): AppointmentResource|JsonResponse
+    {
+        abort_if($appointment->customer_id !== $request->user()->id, 403, 'Unauthorized.');
+        abort_if($appointment->status !== \App\Enums\AppointmentStatus::RESCHEDULE_REQUESTED, 400, 'No reschedule request found.');
+
+        $appointment->update([
+            'status' => \App\Enums\AppointmentStatus::REJECTED,
+            'proposed_date' => null,
+            'proposed_time' => null,
+            'proposed_note' => null,
+        ]);
+
+        return new AppointmentResource(
+            $appointment->load(['customer', 'staff', 'service'])
+        );
+    }
 }

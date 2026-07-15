@@ -17,4 +17,12 @@ class Designation extends Model
     {
         return $this->hasMany(StaffProfile::class);
     }
+
+    public function services()
+    {
+        return $this->belongsToMany(
+            Service::class,
+            'designation_service'
+        );
+    }
 }

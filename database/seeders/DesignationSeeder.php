@@ -7,51 +7,44 @@ use Illuminate\Database\Seeder;
 
 class DesignationSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $designations = [
             [
-                'name' => 'Dentist',
-                'description' => 'Performs dental examinations and treatments.',
-            ],
-            [
-                'name' => 'Dental Assistant',
-                'description' => 'Assists dentists during procedures.',
-            ],
-            [
-                'name' => 'Receptionist',
-                'description' => 'Handles appointments and front desk operations.',
-            ],
-            [
-                'name' => 'Barber',
-                'description' => 'Provides haircut and grooming services.',
+                'name' => 'Senior Hair Stylist',
+                'description' => 'Provides advanced hair cutting, coloring, and styling services.',
             ],
             [
                 'name' => 'Hair Stylist',
-                'description' => 'Provides hair styling and treatment services.',
+                'description' => 'Provides professional hair styling and treatments.',
+            ],
+            [
+                'name' => 'Barber',
+                'description' => 'Provides men\'s grooming, haircuts, beard trimming, and shaving.',
+            ],
+            [
+                'name' => 'Color Specialist',
+                'description' => 'Specializes in hair coloring and highlighting.',
+            ],
+            [
+                'name' => 'Nail Technician',
+                'description' => 'Provides manicure, pedicure, and nail care services.',
             ],
             [
                 'name' => 'Massage Therapist',
-                'description' => 'Provides massage therapy services.',
-            ],
-            [
-                'name' => 'Physiotherapist',
-                'description' => 'Provides physical rehabilitation treatments.',
-            ],
-            [
-                'name' => 'Dermatologist',
-                'description' => 'Specialist in skin care and treatment.',
+                'description' => 'Provides therapeutic and relaxation massage services.',
             ],
             [
                 'name' => 'Esthetician',
-                'description' => 'Provides skincare and beauty treatments.',
+                'description' => 'Provides skincare, facial, and beauty treatments.',
             ],
             [
-                'name' => 'Nurse',
-                'description' => 'Provides patient care and medical assistance.',
+                'name' => 'Spa Therapist',
+                'description' => 'Provides body treatments and wellness therapies.',
+            ],
+            [
+                'name' => 'Receptionist',
+                'description' => 'Manages appointments and customer reception.',
             ],
         ];
 

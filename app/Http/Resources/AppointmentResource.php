@@ -23,6 +23,11 @@ class AppointmentResource extends JsonResource
 
             'notes' => $this->notes,
 
+            'rejection_reason' => $this->rejection_reason,
+            'proposed_date' => $this->proposed_date?->toDateString(),
+            'proposed_time' => $this->proposed_time ? substr($this->proposed_time, 0, 5) : null,
+            'proposed_note' => $this->proposed_note,
+
             'customer' => $this->whenLoaded(
                 'customer',
                 fn () => [

@@ -95,4 +95,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(StaffReview::class, 'customer_id');
     }
+
 }

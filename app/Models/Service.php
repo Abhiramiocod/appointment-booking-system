@@ -43,4 +43,12 @@ class Service extends Model
     {
         return $this->belongsToMany(User::class, 'service_staff', 'service_id', 'staff_id');
     }
+
+    public function designations()
+    {
+        return $this->belongsToMany(
+            Designation::class,
+            'designation_service'
+        );
+    }
 }

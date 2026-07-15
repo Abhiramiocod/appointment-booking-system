@@ -79,4 +79,39 @@ class AppointmentController extends Controller
             $appointment->load(['customer', 'staff', 'service'])
         );
     }
+
+    public function reject(Request $request, Appointment $appointment): AppointmentResource|JsonResponse
+    {
+        abort_if($appointment->staff_id !== $request->user()->id, 403, 'Unauthorized.');
+
+        $appointment->update([
+            'status' => \App\Enums\AppointmentStatus::REJECTED,
+            'rejection_reason' => $request->rejection_reason,
+        ]);
+
+        return new AppointmentResource(
+            $appointment->load(['customer', 'staff', 'service'])
+        );
+    }
+
+    public function proposeTime(Request $request, Appointment $appointment): AppointmentResource|JsonResponse
+    {
+        abort_if($appointment->staff_id !== $request->user()->id, 403, 'Unauthorized.');
+
+        $request->validate([
+            'proposed_date' => 'required|date|after_or_equal:today',
+            'proposed_time' => 'required',
+        ]);
+
+        $appointment->update([
+            'status' => \App\Enums\AppointmentStatus::RESCHEDULE_REQUESTED,
+            'proposed_date' => $request->proposed_date,
+            'proposed_time' => $request->proposed_time,
+            'proposed_note' => $request->proposed_note,
+        ]);
+
+        return new AppointmentResource(
+            $appointment->load(['customer', 'staff', 'service'])
+        );
+    }
 }

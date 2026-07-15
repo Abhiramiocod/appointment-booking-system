@@ -28,7 +28,7 @@ class StaffApplicationController extends Controller
         $applications = StaffApplication::query()
             ->when(
                 $request->filled('status'),
-                fn ($query) => $query->where('status', $request->status)
+                fn($query) => $query->where('status', $request->status)
             )
             ->when(
                 $request->filled('search'),
@@ -92,6 +92,14 @@ class StaffApplicationController extends Controller
                 'employment_status' => EmploymentStatus::ACTIVE,
             ]);
 
+            // Automatically assign the default services for the selected designation
+            $serviceIds = $staffApplication->designation
+                ->services()
+                ->pluck('services.id')
+                ->toArray();
+
+            $staff->services()->sync($serviceIds);
+
             $staffApplication->update([
                 'status' => StaffApplicationStatus::APPROVED,
                 'approved_by' => auth()->id(),
@@ -108,10 +116,12 @@ class StaffApplicationController extends Controller
             return response()->json([
                 'message' => 'Application approved successfully.',
                 'temporary_password' => $temporaryPassword,
-                'staff' => $staff,
+                'staff' => $staff->load([
+                    'staffProfile.designation',
+                    'services',
+                ]),
             ]);
         } catch (\Throwable $e) {
-
             DB::rollBack();
 
             throw $e;

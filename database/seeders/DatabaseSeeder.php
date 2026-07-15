@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             WorkingHourSeeder::class,
             AppointmentSeeder::class,
             DesignationSeeder::class,
+            DesignationServiceSeeder::class,
         ]);
     }
 }

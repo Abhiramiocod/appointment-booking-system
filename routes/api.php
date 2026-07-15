@@ -92,11 +92,14 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::patch('{appointment}/confirm', [StaffAppointmentController::class, 'confirm']);
             Route::patch('{appointment}/complete', [StaffAppointmentController::class, 'complete']);
             Route::patch('{appointment}/cancel', [StaffAppointmentController::class, 'cancel']);
+            Route::patch('{appointment}/reject', [StaffAppointmentController::class, 'reject']);
+            Route::patch('{appointment}/propose-time', [StaffAppointmentController::class, 'proposeTime']);
         });
     });
 
     Route::prefix('customer')->group(function () {
         Route::get('/dashboard', [CustomerDashboardController::class, 'index']);
+        Route::get('/services', [CustomerServiceController::class, 'index']);
         Route::get('/services/{service}/staff', [CustomerServiceController::class, 'staff']);
         Route::get('/staff/{staff}/available-slots', [AvailabilityController::class, 'availableSlots']);
 
@@ -105,6 +108,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('{appointment}', [CustomerAppointmentController::class, 'show']);
             Route::post('/', [CustomerAppointmentController::class, 'store']);
             Route::patch('{appointment}/cancel', [CustomerAppointmentController::class, 'cancel']);
+            Route::patch('{appointment}/accept-reschedule', [CustomerAppointmentController::class, 'acceptReschedule']);
+            Route::patch('{appointment}/decline-reschedule', [CustomerAppointmentController::class, 'declineReschedule']);
         });
     });
 });

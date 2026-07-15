@@ -11,4 +11,8 @@ enum AppointmentStatus: string
     case COMPLETED = 'completed';
 
     case CANCELLED = 'cancelled';
+
+    case REJECTED = 'rejected';
+
+    case RESCHEDULE_REQUESTED = 'reschedule_requested';
 }

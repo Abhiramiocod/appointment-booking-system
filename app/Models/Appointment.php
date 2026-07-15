@@ -17,12 +17,17 @@ class Appointment extends Model
         'end_time',
         'status',
         'notes',
+        'rejection_reason',
+        'proposed_date',
+        'proposed_time',
+        'proposed_note',
     ];
 
     protected function casts(): array
     {
         return [
             'appointment_date' => 'date',
+            'proposed_date' => 'date',
             'status' => AppointmentStatus::class,
         ];
     }
