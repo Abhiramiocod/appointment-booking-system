@@ -15,7 +15,7 @@ class AppointmentResource extends JsonResource
         return [
             'id' => $this->id,
 
-            'appointment_date' => $this->appointment_date,
+            'appointment_date' => $this->appointment_date?->toDateString(),
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
 
@@ -51,6 +51,15 @@ class AppointmentResource extends JsonResource
                     'name' => $this->service->name,
                     'duration' => $this->service->duration,
                     'price' => $this->service->price,
+                ]
+            ),
+
+            'review' => $this->whenLoaded(
+                'review',
+                fn () => [
+                    'id' => $this->review->id,
+                    'rating' => $this->review->rating,
+                    'review' => $this->review->review,
                 ]
             ),
 

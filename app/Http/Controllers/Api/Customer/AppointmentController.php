@@ -13,6 +13,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
+use App\Http\Requests\Customer\Reviews\StoreStaffReviewRequest;
+
 class AppointmentController extends Controller
 {
     public function index(Request $request)
@@ -21,7 +23,7 @@ class AppointmentController extends Controller
 
         $appointments = Appointment::query()
             ->where('customer_id', $request->user()->id)
-            ->with(['service', 'staff'])
+            ->with(['service', 'staff', 'review'])
             ->latest()
             ->paginate();
 
@@ -33,7 +35,7 @@ class AppointmentController extends Controller
         Gate::authorize('viewCustomer', $appointment);
 
         return new AppointmentResource(
-            $appointment->load(['service', 'staff'])
+            $appointment->load(['service', 'staff', 'review'])
         );
     }
 
@@ -117,6 +119,24 @@ class AppointmentController extends Controller
 
         return new AppointmentResource(
             $appointment->load(['customer', 'staff', 'service'])
+        );
+    }
+
+    public function review(
+        StoreStaffReviewRequest $request,
+        Appointment $appointment
+    ): JsonResponse|AppointmentResource {
+        Gate::authorize('reviewCustomer', $appointment);
+
+        $appointment->review()->create([
+            'staff_id' => $appointment->staff_id,
+            'customer_id' => $request->user()->id,
+            'rating' => $request->rating,
+            'review' => $request->review,
+        ]);
+
+        return new AppointmentResource(
+            $appointment->load(['customer', 'staff', 'service', 'review'])
         );
     }
 }

@@ -8,14 +8,23 @@ use App\Http\Requests\Services\UpdateServiceRequest;
 use App\Http\Resources\ServiceResource;
 use App\Models\Service;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ServicesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return ServiceResource::collection(
-            Service::latest('created_at')->paginate(15)
-        );
+        $search = $request->input('search');
+
+        $services = Service::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            })
+            ->latest('created_at')
+            ->get();
+
+        return ServiceResource::collection($services);
     }
 
     public function store(StoreServiceRequest $request): JsonResponse

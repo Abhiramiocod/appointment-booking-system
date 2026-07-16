@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\AppointmentController as AdminAppointmentController;
 use App\Http\Controllers\Api\Admin\CustomerController;
 use App\Http\Controllers\Api\Admin\ServicesController;
+use App\Http\Controllers\Api\Admin\AnalyticsController;
 use App\Http\Controllers\Api\Admin\StaffApplicationController as AdminStaffApplicationController;
 use App\Http\Controllers\Api\Admin\StaffController;
 use App\Http\Controllers\Api\Auth\AuthController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Api\Staff\StaffApplicationController;
 use App\Http\Controllers\Api\Staff\StaffProfileController;
 use App\Http\Controllers\Api\Staff\StaffServiceController;
 use App\Http\Controllers\Api\Staff\WorkingHourController;
+use App\Http\Controllers\Api\Staff\ReviewController as StaffReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('register', [AuthController::class, 'register']);
@@ -68,6 +70,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('customers')->group(function () {
             Route::get('/', [CustomerController::class, 'index']);
         });
+
+        Route::get('analytics', [AnalyticsController::class, 'index']);
     });
 
     Route::middleware(['staff'])->prefix('staff')->group(function () {
@@ -86,6 +90,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [WorkingHourController::class, 'index']);
             Route::put('/', [WorkingHourController::class, 'update']);
         });
+
+        Route::get('/reviews', [StaffReviewController::class, 'index']);
 
         Route::prefix('appointments')->group(function () {
             Route::get('/', [StaffAppointmentController::class, 'index']);
@@ -108,6 +114,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('{appointment}', [CustomerAppointmentController::class, 'show']);
             Route::post('/', [CustomerAppointmentController::class, 'store']);
             Route::patch('{appointment}/cancel', [CustomerAppointmentController::class, 'cancel']);
+            Route::post('{appointment}/review', [CustomerAppointmentController::class, 'review']);
             Route::patch('{appointment}/accept-reschedule', [CustomerAppointmentController::class, 'acceptReschedule']);
             Route::patch('{appointment}/decline-reschedule', [CustomerAppointmentController::class, 'declineReschedule']);
         });

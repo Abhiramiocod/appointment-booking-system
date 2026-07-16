@@ -23,6 +23,13 @@ class AppointmentPolicy
         return $user->id === $appointment->customer_id;
     }
 
+    public function reviewCustomer(User $user, Appointment $appointment): bool
+    {
+        return $user->id === $appointment->customer_id
+            && $appointment->status === \App\Enums\AppointmentStatus::COMPLETED
+            && !$appointment->review()->exists();
+    }
+
     public function viewAnyStaff(User $user): bool
     {
         return true;
