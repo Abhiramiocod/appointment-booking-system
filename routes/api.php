@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\Staff\StaffApplicationController;
 use App\Http\Controllers\Api\Staff\StaffProfileController;
 use App\Http\Controllers\Api\Staff\StaffServiceController;
 use App\Http\Controllers\Api\Staff\WorkingHourController;
+use App\Http\Controllers\Api\Staff\WorkingHourController as AdminWorkingHourController;
 use App\Http\Controllers\Api\Staff\ReviewController as StaffReviewController;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/', [StaffController::class, 'store']);
             Route::get('/search', [StaffController::class, 'search']);
             Route::patch('{staff}/status', [StaffController::class, 'updateEmploymentStatus']);
+            Route::get('{staff}/schedule', [StaffController::class, 'schedule']);
             Route::get('{staff}', [StaffController::class, 'show']);
             Route::put('{staff}', [StaffController::class, 'update']);
             Route::delete('{staff}', [StaffController::class, 'destroy']);
@@ -70,6 +72,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('customers')->group(function () {
             Route::get('/', [CustomerController::class, 'index']);
         });
+
+        // Designations list (used by admin forms)
+        Route::get('designations', [DesignationController::class, 'index']);
 
         Route::get('analytics', [AnalyticsController::class, 'index']);
     });

@@ -8,4 +8,5 @@ enum EmploymentStatus: string
     case INACTIVE = 'inactive';
     case ON_LEAVE = 'on_leave';
     case TERMINATED = 'terminated';
+    case SUSPENDED = 'suspended';
 }
