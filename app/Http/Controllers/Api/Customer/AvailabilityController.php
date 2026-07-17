@@ -53,7 +53,27 @@ class AvailabilityController extends Controller
         while (
             $start->copy()->addMinutes($duration)->lte($end)
         ) {
-            $slots[] = $start->format('H:i');
+            $slotStart = $start->copy();
+            $slotEnd = $start->copy()->addMinutes($duration);
+
+            $overlapsBreak = false;
+            $breaks = $workingHour->breaks ?? [];
+            foreach ($breaks as $break) {
+                if (empty($break['start_time']) || empty($break['end_time'])) {
+                    continue;
+                }
+                $breakStart = Carbon::parse($date->toDateString() . ' ' . $break['start_time']);
+                $breakEnd = Carbon::parse($date->toDateString() . ' ' . $break['end_time']);
+
+                if ($slotStart->lt($breakEnd) && $slotEnd->gt($breakStart)) {
+                    $overlapsBreak = true;
+                    break;
+                }
+            }
+
+            if (! $overlapsBreak) {
+                $slots[] = $start->format('H:i');
+            }
 
             $start->addMinutes($duration);
         }

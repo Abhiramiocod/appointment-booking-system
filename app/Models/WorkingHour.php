@@ -12,6 +12,12 @@ class WorkingHour extends Model
         'start_time',
         'end_time',
         'is_available',
+        'breaks',
+    ];
+
+    protected $casts = [
+        'is_available' => 'boolean',
+        'breaks' => 'array',
     ];
 
     public function staff()

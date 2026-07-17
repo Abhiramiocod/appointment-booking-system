@@ -58,20 +58,29 @@ class AnalyticsController extends Controller
                 ];
             });
 
-        // 4. Staff Performance (Average Rating & Bookings)
+        // 4. Staff Performance (Average Rating, Bookings & Revenue)
         $staffPerformance = User::where('role', UserRole::STAFF)
             ->withCount(['staffAppointments as bookings_count'])
             ->withAvg('receivedReviews as avg_rating', 'rating')
-            ->orderBy('bookings_count', 'desc')
-            ->limit(5)
             ->get()
             ->map(function ($user) {
+                // Calculate actual completed appointment revenue
+                $revenue = Appointment::where('staff_id', $user->id)
+                    ->where('status', 'completed')
+                    ->join('services', 'appointments.service_id', '=', 'services.id')
+                    ->sum('services.price');
+
                 return [
                     'name' => $user->name,
                     'bookings' => $user->bookings_count,
-                    'rating' => round($user->avg_rating ?? 5.0, 1)
+                    'rating' => round($user->avg_rating ?? 5.0, 1),
+                    'revenue' => round($revenue, 2),
+                    'avatar' => $user->image ? asset($user->image) : null,
                 ];
-            });
+            })
+            ->sortByDesc('bookings')
+            ->take(5)
+            ->values();
 
         return response()->json([
             'metrics' => [

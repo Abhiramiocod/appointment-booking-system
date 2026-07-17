@@ -21,6 +21,8 @@ class StaffResource extends JsonResource
 
             'role' => $this->role->value,
 
+            'image' => $this->image ? asset($this->image) : null,
+
             'created_at' => $this->created_at?->toDateTimeString(),
 
             'profile' => [

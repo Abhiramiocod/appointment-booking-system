@@ -14,6 +14,7 @@ class WorkingHourResource extends JsonResource
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
             'is_available' => $this->is_available,
+            'breaks' => $this->breaks ?? [],
         ];
     }
 }

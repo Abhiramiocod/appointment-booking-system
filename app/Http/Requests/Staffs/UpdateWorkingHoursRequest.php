@@ -28,6 +28,9 @@ class UpdateWorkingHoursRequest extends FormRequest
             'working_hours.*.start_time' => ['nullable', 'date_format:H:i'],
             'working_hours.*.end_time' => ['nullable', 'date_format:H:i'],
             'working_hours.*.is_available' => ['required', 'boolean'],
+            'working_hours.*.breaks' => ['nullable', 'array'],
+            'working_hours.*.breaks.*.start_time' => ['required', 'date_format:H:i'],
+            'working_hours.*.breaks.*.end_time' => ['required', 'date_format:H:i'],
         ];
     }
 }

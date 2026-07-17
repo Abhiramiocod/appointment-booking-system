@@ -40,6 +40,9 @@ class WorkingHourController extends Controller
                         : null,
 
                     'is_available' => $hour['is_available'],
+                    'breaks' => $hour['is_available']
+                        ? ($hour['breaks'] ?? [])
+                        : [],
                 ]
             );
         }

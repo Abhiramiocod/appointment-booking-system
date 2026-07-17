@@ -23,7 +23,7 @@ class UpdateStaffServicesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'service_ids' => ['required', 'array'],
+            'service_ids' => ['present', 'array'],
             'service_ids.*' => ['integer', 'exists:services,id'],
         ];
     }
