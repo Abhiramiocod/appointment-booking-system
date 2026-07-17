@@ -9,7 +9,6 @@ use App\Http\Requests\Admin\UpdateEmploymentStatusRequest;
 use App\Http\Requests\Admin\UpdateStaffRequest;
 use App\Http\Resources\StaffResource;
 use App\Http\Resources\StaffSearchResource;
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -63,19 +62,19 @@ class StaffController extends Controller
 
         // 1. Create the user account
         $staff = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
+            'name' => $data['name'],
+            'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role'     => UserRole::STAFF,
-            'image'    => $data['image'] ?? null,
+            'role' => UserRole::STAFF,
+            'image' => $data['image'] ?? null,
         ]);
 
         // 2. Create the staff profile
         $staff->staffProfile()->create([
-            'phone'              => $data['phone']              ?? null,
-            'designation_id'     => $data['designation_id']     ?? null,
-            'experience_years'   => $data['experience_years']   ?? null,
-            'employment_status'  => $data['employment_status']  ?? 'active',
+            'phone' => $data['phone'] ?? null,
+            'designation_id' => $data['designation_id'] ?? null,
+            'experience_years' => $data['experience_years'] ?? null,
+            'employment_status' => $data['employment_status'] ?? 'active',
         ]);
 
         // 3. Sync services
@@ -111,10 +110,10 @@ class StaffController extends Controller
 
         // Update user fields
         $userFields = array_filter([
-            'name'  => $data['name']  ?? null,
+            'name' => $data['name'] ?? null,
             'email' => $data['email'] ?? null,
             'image' => $data['image'] ?? null,
-        ], fn($v) => $v !== null);
+        ], fn ($v) => $v !== null);
 
         if (! empty($data['password'])) {
             $userFields['password'] = Hash::make($data['password']);
@@ -126,11 +125,11 @@ class StaffController extends Controller
 
         // Update (or create) the staff profile
         $profileFields = array_filter([
-            'phone'             => $data['phone']             ?? null,
-            'designation_id'    => $data['designation_id']    ?? null,
-            'experience_years'  => $data['experience_years']  ?? null,
+            'phone' => $data['phone'] ?? null,
+            'designation_id' => $data['designation_id'] ?? null,
+            'experience_years' => $data['experience_years'] ?? null,
             'employment_status' => $data['employment_status'] ?? null,
-        ], fn($v) => $v !== null);
+        ], fn ($v) => $v !== null);
 
         if (! empty($profileFields)) {
             $staff->staffProfile()->updateOrCreate(
@@ -213,7 +212,7 @@ class StaffController extends Controller
 
         return response()->json([
             'message' => 'Employment status updated successfully.',
-            'data'    => new StaffResource($staff->fresh()->load(['staffProfile.designation', 'services'])),
+            'data' => new StaffResource($staff->fresh()->load(['staffProfile.designation', 'services'])),
         ]);
     }
 

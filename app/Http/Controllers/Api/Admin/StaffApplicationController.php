@@ -28,7 +28,7 @@ class StaffApplicationController extends Controller
         $applications = StaffApplication::query()
             ->when(
                 $request->filled('status'),
-                fn($query) => $query->where('status', $request->status)
+                fn ($query) => $query->where('status', $request->status)
             )
             ->when(
                 $request->filled('search'),

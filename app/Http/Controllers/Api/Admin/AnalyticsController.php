@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
-use App\Models\User;
 use App\Models\Service;
-use App\Enums\UserRole;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +17,7 @@ class AnalyticsController extends Controller
         // 1. Calculate General Metrics
         $totalCustomers = User::where('role', UserRole::CUSTOMER)->count();
         $totalStaff = User::where('role', UserRole::STAFF)->count();
-        
+
         // Profit is sum of service price for completed appointments
         $totalProfit = Appointment::where('status', 'completed')
             ->join('services', 'appointments.service_id', '=', 'services.id')
@@ -54,7 +54,7 @@ class AnalyticsController extends Controller
                     'name' => $item->service?->name ?? 'Unknown Service',
                     'price' => $item->service?->price ?? 0,
                     'bookings' => $item->bookings_count,
-                    'revenue' => ($item->service?->price ?? 0) * $item->bookings_count
+                    'revenue' => ($item->service?->price ?? 0) * $item->bookings_count,
                 ];
             });
 
@@ -94,7 +94,7 @@ class AnalyticsController extends Controller
             ],
             'monthly_earnings' => $monthlyEarnings,
             'top_services' => $topServices,
-            'staff_performance' => $staffPerformance
+            'staff_performance' => $staffPerformance,
         ]);
     }
 }

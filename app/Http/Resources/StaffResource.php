@@ -48,9 +48,9 @@ class StaffResource extends JsonResource
             ],
 
             'services' => $this->whenLoaded('services', function () {
-                return $this->services->map(fn($srv) => [
-                    'id'       => $srv->id,
-                    'name'     => $srv->name,
+                return $this->services->map(fn ($srv) => [
+                    'id' => $srv->id,
+                    'name' => $srv->name,
                     'duration' => $srv->duration ?? null,
                 ]);
             }),

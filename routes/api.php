@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AnalyticsController;
 use App\Http\Controllers\Api\Admin\AppointmentController as AdminAppointmentController;
 use App\Http\Controllers\Api\Admin\CustomerController;
 use App\Http\Controllers\Api\Admin\ServicesController;
-use App\Http\Controllers\Api\Admin\AnalyticsController;
 use App\Http\Controllers\Api\Admin\StaffApplicationController as AdminStaffApplicationController;
 use App\Http\Controllers\Api\Admin\StaffController;
 use App\Http\Controllers\Api\Auth\AuthController;
@@ -11,15 +11,15 @@ use App\Http\Controllers\Api\Customer\AppointmentController as CustomerAppointme
 use App\Http\Controllers\Api\Customer\AvailabilityController;
 use App\Http\Controllers\Api\Customer\CustomerServiceController;
 use App\Http\Controllers\Api\Customer\DashboardController as CustomerDashboardController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\Staff\AppointmentController as StaffAppointmentController;
 use App\Http\Controllers\Api\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Api\Staff\DesignationController;
+use App\Http\Controllers\Api\Staff\ReviewController as StaffReviewController;
 use App\Http\Controllers\Api\Staff\StaffApplicationController;
 use App\Http\Controllers\Api\Staff\StaffProfileController;
 use App\Http\Controllers\Api\Staff\StaffServiceController;
 use App\Http\Controllers\Api\Staff\WorkingHourController;
-use App\Http\Controllers\Api\Staff\WorkingHourController as AdminWorkingHourController;
-use App\Http\Controllers\Api\Staff\ReviewController as StaffReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('register', [AuthController::class, 'register']);
@@ -31,6 +31,12 @@ Route::prefix('staff')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::post('{notification}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('read-all', [NotificationController::class, 'markAllAsRead']);
+    });
 
     Route::prefix('admin')->middleware('admin')->group(function () {
 
