@@ -10,14 +10,31 @@ use Illuminate\Http\JsonResponse;
 
 class NotificationController extends Controller
 {
+    /**
+     * Return latest 5 notifications for the topbar dropdown.
+     */
     public function index()
     {
         return NotificationResource::collection(
             auth()->user()
                 ->notifications()
                 ->latest()
+                ->limit(5)
                 ->get()
         );
+    }
+
+    /**
+     * Return all notifications with pagination (15 per page) for the full page.
+     */
+    public function indexAll()
+    {
+        $paginated = auth()->user()
+            ->notifications()
+            ->latest()
+            ->paginate(15);
+
+        return NotificationResource::collection($paginated);
     }
 
     public function markAsRead(Notification $notification): JsonResponse
