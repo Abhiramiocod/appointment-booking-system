@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Customer;
+namespace App\Http\Controllers\Api\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Reviews\StoreStaffReviewRequest;
-use App\Http\Requests\Reviews\UpdateStaffReviewRequest;
+use App\Http\Requests\Customer\Reviews\StoreStaffReviewRequest;
+use App\Http\Requests\Customer\Reviews\UpdateStaffReviewRequest;
 use App\Models\Appointment;
 use App\Models\StaffReview;
 use Illuminate\Http\JsonResponse;

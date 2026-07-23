@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Reviews;
+namespace App\Http\Requests\Customer\Reviews;
 
 use Illuminate\Foundation\Http\FormRequest;
 
