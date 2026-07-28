@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\AuthProvider;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -31,6 +33,8 @@ class User extends Authenticatable
         'password',
         'role',
         'image',
+        'provider',
+        'provider_id',
     ];
 
     protected function casts(): array
@@ -38,6 +42,7 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
             'role' => UserRole::class,
+            'provider' => AuthProvider::class,
         ];
     }
 
@@ -95,5 +100,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(StaffReview::class, 'customer_id');
     }
-
 }

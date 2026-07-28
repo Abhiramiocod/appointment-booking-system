@@ -18,9 +18,13 @@ use App\Http\Controllers\Api\Staff\StaffApplicationController;
 use App\Http\Controllers\Api\Staff\StaffProfileController;
 use App\Http\Controllers\Api\Staff\StaffServiceController;
 use App\Http\Controllers\Api\Staff\WorkingHourController;
-use App\Http\Controllers\Api\Staff\WorkingHourController as AdminWorkingHourController;
 use App\Http\Controllers\Api\Staff\ReviewController as StaffReviewController;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\Api\Auth\SocialAuthController;
+
+Route::get('auth/google/redirect', [SocialAuthController::class, 'googleRedirect']);
+Route::get('auth/google/callback', [SocialAuthController::class, 'googleCallback']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -30,6 +34,7 @@ Route::prefix('staff')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::prefix('admin')->middleware('admin')->group(function () {
