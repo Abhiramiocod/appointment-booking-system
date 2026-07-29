@@ -10,6 +10,7 @@ use App\Http\Requests\Customer\Reviews\StoreStaffReviewRequest;
 use App\Http\Requests\Customer\StoreAppointmentRequest;
 use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
+use App\Services\NotificationService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -100,6 +101,14 @@ class AppointmentController extends Controller
             'proposed_note' => null,
         ]);
 
+        NotificationService::notify(
+            user: $appointment->staff,
+            title: 'Reschedule Accepted',
+            message: "{$appointment->customer->name} has accepted the reschedule proposal for {$appointment->service->name} on ".$appointment->appointment_date->toDateString()." at {$appointment->start_time}.",
+            type: 'appointment',
+            actionUrl: '/staff/appointments'
+        );
+
         return new AppointmentResource(
             $appointment->load(['customer', 'staff', 'service'])
         );
@@ -116,6 +125,14 @@ class AppointmentController extends Controller
             'proposed_time' => null,
             'proposed_note' => null,
         ]);
+
+        NotificationService::notify(
+            user: $appointment->staff,
+            title: 'Reschedule Declined',
+            message: "{$appointment->customer->name} has declined the reschedule proposal for {$appointment->service->name}.",
+            type: 'appointment',
+            actionUrl: '/staff/appointments'
+        );
 
         return new AppointmentResource(
             $appointment->load(['customer', 'staff', 'service'])
@@ -134,6 +151,14 @@ class AppointmentController extends Controller
             'rating' => $request->rating,
             'review' => $request->review,
         ]);
+
+        NotificationService::notify(
+            user: $appointment->staff,
+            title: 'New Review Received',
+            message: "{$appointment->customer->name} left you a review with rating: {$request->rating}/5 stars.",
+            type: 'review',
+            actionUrl: '/staff/reviews'
+        );
 
         return new AppointmentResource(
             $appointment->load(['customer', 'staff', 'service', 'review'])

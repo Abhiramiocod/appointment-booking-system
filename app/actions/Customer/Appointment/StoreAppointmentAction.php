@@ -6,6 +6,7 @@ use App\Enums\AppointmentStatus;
 use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\User;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Exception;
 
@@ -55,7 +56,7 @@ class StoreAppointmentAction
             throw new Exception('Selected slot is not available.');
         }
 
-        return Appointment::create([
+        $appointment = Appointment::create([
             'customer_id' => $customer->id,
             'staff_id' => $staff->id,
             'service_id' => $service->id,
@@ -65,5 +66,15 @@ class StoreAppointmentAction
             'status' => AppointmentStatus::PENDING,
             'notes' => $notes,
         ]);
+
+        NotificationService::notify(
+            user: $staff,
+            title: 'New Appointment',
+            message: "{$customer->name} booked a {$service->name} appointment on {$appointmentDate} at {$startTime}.",
+            type: 'appointment',
+            actionUrl: '/staff/appointments'
+        );
+
+        return $appointment;
     }
 }

@@ -4,6 +4,7 @@ namespace App\actions\Staff\Appointment;
 
 use App\Enums\AppointmentStatus;
 use App\Models\Appointment;
+use App\Services\NotificationService;
 use Exception;
 
 class ConfirmAppointmentAction
@@ -21,6 +22,14 @@ class ConfirmAppointmentAction
         $appointment->update([
             'status' => AppointmentStatus::CONFIRMED,
         ]);
+
+        NotificationService::notify(
+            user: $appointment->customer,
+            title: 'Appointment Confirmed',
+            message: "Your appointment for {$appointment->service->name} on ".$appointment->appointment_date->toDateString()." at {$appointment->start_time} has been confirmed.",
+            type: 'appointment',
+            actionUrl: '/customer/schedule'
+        );
 
         return $appointment;
     }

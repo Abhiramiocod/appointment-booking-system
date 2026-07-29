@@ -4,6 +4,7 @@ namespace App\actions\Staff\Appointment;
 
 use App\Enums\AppointmentStatus;
 use App\Models\Appointment;
+use App\Services\NotificationService;
 
 class CancelAppointmentAction
 {
@@ -12,6 +13,14 @@ class CancelAppointmentAction
         $appointment->update([
             'status' => AppointmentStatus::CANCELLED,
         ]);
+
+        NotificationService::notify(
+            user: $appointment->customer,
+            title: 'Appointment Cancelled',
+            message: "Your appointment for {$appointment->service->name} on ".$appointment->appointment_date->toDateString().' has been cancelled.',
+            type: 'appointment',
+            actionUrl: '/customer/schedule'
+        );
 
         return $appointment;
     }

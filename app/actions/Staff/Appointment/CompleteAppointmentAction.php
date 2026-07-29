@@ -4,6 +4,7 @@ namespace App\actions\Staff\Appointment;
 
 use App\Enums\AppointmentStatus;
 use App\Models\Appointment;
+use App\Services\NotificationService;
 use Exception;
 
 class CompleteAppointmentAction
@@ -21,6 +22,14 @@ class CompleteAppointmentAction
         $appointment->update([
             'status' => AppointmentStatus::COMPLETED,
         ]);
+
+        NotificationService::notify(
+            user: $appointment->customer,
+            title: 'Appointment Completed',
+            message: "Your appointment for {$appointment->service->name} has been completed. Thank you!",
+            type: 'appointment',
+            actionUrl: '/customer/schedule'
+        );
 
         return $appointment;
     }
