@@ -25,6 +25,9 @@ use App\Http\Controllers\Api\Auth\SocialAuthController;
 
 Route::get('auth/google/redirect', [SocialAuthController::class, 'googleRedirect']);
 Route::get('auth/google/callback', [SocialAuthController::class, 'googleCallback']);
+Route::get('auth/microsoft/redirect', [SocialAuthController::class, 'microsoftRedirect']);
+Route::get('auth/microsoft/callback', [SocialAuthController::class, 'microsoftCallback']);
+
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);

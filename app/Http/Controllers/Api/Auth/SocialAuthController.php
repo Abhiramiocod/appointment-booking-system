@@ -73,7 +73,7 @@ class SocialAuthController extends Controller
                 return $user->createToken('api_token')->plainTextToken;
             });
 
-            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            $frontendUrl = config('app.frontend_url');
             $redirectUrl = rtrim($frontendUrl, '/') . '/login/callback?token=' . urlencode($token);
 
             return redirect()->away($redirectUrl);
@@ -83,10 +83,124 @@ class SocialAuthController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            $frontendUrl = config('app.frontend_url');
             $errorRedirectUrl = rtrim($frontendUrl, '/') . '/login?error=' . urlencode('Google authentication failed. Please try again.');
 
             return redirect()->away($errorRedirectUrl);
         }
     }
+
+    /**
+     * Redirect the user to Microsoft's OAuth consent screen.
+     */
+    public function microsoftRedirect(): JsonResponse|RedirectResponse
+    {
+        try {
+            /** @var \Laravel\Socialite\Two\AbstractProvider $driver */
+            $driver = Socialite::driver('microsoft');
+
+            return $driver->stateless()->redirect();
+        } catch (Exception $e) {
+            Log::error('Microsoft OAuth redirect failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'message' => 'Failed to initiate Microsoft authentication.',
+            ], 500);
+        }
+    }
+
+    /**
+     * Handle the callback from Microsoft OAuth.
+     */
+    public function microsoftCallback(): RedirectResponse|JsonResponse
+    {
+        $frontendUrl = config('app.frontend_url');
+
+        try {
+            /** @var \Laravel\Socialite\Two\AbstractProvider $driver */
+            $driver = Socialite::driver('microsoft');
+            $microsoftUser = $driver->stateless()->user();
+
+            $microsoftRawUser = $microsoftUser->user ?? [];
+            $rawMail = $microsoftRawUser['mail'] ?? null;
+            $userPrincipalName = $microsoftRawUser['userPrincipalName'] ?? ($microsoftUser->getEmail() ?? '');
+
+            $email = null;
+
+            // 1. Prefer official 'mail' attribute if valid email
+            if (!empty($rawMail) && filter_var($rawMail, FILTER_VALIDATE_EMAIL) && !str_contains($rawMail, '#EXT#')) {
+                $email = $rawMail;
+            }
+
+            // 2. Parse guest/external #EXT# format from userPrincipalName or email
+            if (!$email) {
+                $target = !empty($userPrincipalName) ? $userPrincipalName : $microsoftUser->getEmail();
+                if (!empty($target) && str_contains($target, '#EXT#')) {
+                    $prefix = explode('#EXT#', $target)[0];
+                    $lastUnderscorePos = strrpos($prefix, '_');
+                    if ($lastUnderscorePos !== false) {
+                        $email = substr_replace($prefix, '@', $lastUnderscorePos, 1);
+                    }
+                }
+            }
+
+            // 3. Fallback to Socialite email
+            if (!$email) {
+                $email = $microsoftUser->getEmail();
+            }
+
+
+            if (empty($email)) {
+                Log::warning('Microsoft OAuth callback missing email', [
+                    'microsoft_id' => $microsoftUser->getId(),
+                ]);
+
+                $errorRedirectUrl = rtrim($frontendUrl, '/') . '/login?error=' . urlencode('Email address not provided by Microsoft.');
+                return redirect()->away($errorRedirectUrl);
+            }
+
+
+            $token = DB::transaction(function () use ($microsoftUser, $email) {
+                $user = User::where('email', $email)->first();
+
+                if ($user) {
+                    $user->update([
+                        'provider' => AuthProvider::MICROSOFT,
+                        'provider_id' => $microsoftUser->getId(),
+                        'image' => $microsoftUser->getAvatar() ?? $user->image,
+                    ]);
+                } else {
+                    $user = User::create([
+                        'name' => $microsoftUser->getName() ?? $microsoftUser->getNickname() ?? 'Microsoft User',
+                        'email' => $email,
+                        'provider' => AuthProvider::MICROSOFT,
+                        'provider_id' => $microsoftUser->getId(),
+                        'image' => $microsoftUser->getAvatar(),
+                        'role' => UserRole::CUSTOMER,
+                        'password' => null,
+                        'email_verified_at' => now(),
+                    ]);
+                }
+
+                return $user->createToken('api_token')->plainTextToken;
+            });
+
+            $redirectUrl = rtrim($frontendUrl, '/') . '/login/callback?token=' . urlencode($token);
+
+            return redirect()->away($redirectUrl);
+        } catch (Exception $e) {
+            Log::error('Microsoft OAuth callback failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            $errorRedirectUrl = rtrim($frontendUrl, '/') . '/login?error=' . urlencode('Microsoft authentication failed. Please try again.');
+
+            return redirect()->away($errorRedirectUrl);
+        }
+    }
 }
+
