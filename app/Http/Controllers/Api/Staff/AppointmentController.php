@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Staff;
 use App\Actions\Staff\Appointment\CancelAppointmentAction;
 use App\Actions\Staff\Appointment\CompleteAppointmentAction;
 use App\Actions\Staff\Appointment\ConfirmAppointmentAction;
+use App\Enums\AppointmentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
@@ -85,7 +86,7 @@ class AppointmentController extends Controller
         abort_if($appointment->staff_id !== $request->user()->id, 403, 'Unauthorized.');
 
         $appointment->update([
-            'status' => \App\Enums\AppointmentStatus::REJECTED,
+            'status' => AppointmentStatus::REJECTED,
             'rejection_reason' => $request->rejection_reason,
         ]);
 
@@ -104,7 +105,7 @@ class AppointmentController extends Controller
         ]);
 
         $appointment->update([
-            'status' => \App\Enums\AppointmentStatus::RESCHEDULE_REQUESTED,
+            'status' => AppointmentStatus::RESCHEDULE_REQUESTED,
             'proposed_date' => $request->proposed_date,
             'proposed_time' => $request->proposed_time,
             'proposed_note' => $request->proposed_note,

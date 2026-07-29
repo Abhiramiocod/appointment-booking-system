@@ -23,11 +23,15 @@ class AuthController extends Controller
 
         $user = User::create($validated);
 
+        // Send email verification notification
+        $user->sendEmailVerificationNotification();
+
         $token = $user->createToken('api_token')->plainTextToken;
 
         return response()->json([
             'user' => new UserResource($user),
             'token' => $token,
+            'message' => 'Registration successful. Please check your email to verify your account.',
         ]);
     }
 
@@ -43,6 +47,13 @@ class AuthController extends Controller
             }
 
             $user = $request->user();
+
+            // Local users check for email verification
+            if (! $user->hasVerifiedEmail()) {
+                return response()->json([
+                    'message' => 'Please verify your email.',
+                ], 403);
+            }
 
             $token = $user->createToken('api_token')->plainTextToken;
 
@@ -66,6 +77,23 @@ class AuthController extends Controller
     {
         return response()->json([
             'user' => new UserResource($request->user()),
+        ]);
+    }
+
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'alpha_dash', 'unique:users,username,'.$user->id],
+        ]);
+
+        $user->update($validated);
+
+        return response()->json([
+            'user' => new UserResource($user),
+            'message' => 'Profile updated successfully',
         ]);
     }
 

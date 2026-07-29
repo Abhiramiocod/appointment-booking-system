@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\StaffResource;
 use App\Http\Resources\ServiceResource;
+use App\Http\Resources\StaffResource;
 use App\Models\Service;
 
 class CustomerServiceController extends Controller

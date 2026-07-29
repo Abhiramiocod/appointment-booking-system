@@ -1,12 +1,15 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AnalyticsController;
 use App\Http\Controllers\Api\Admin\AppointmentController as AdminAppointmentController;
 use App\Http\Controllers\Api\Admin\CustomerController;
 use App\Http\Controllers\Api\Admin\ServicesController;
-use App\Http\Controllers\Api\Admin\AnalyticsController;
 use App\Http\Controllers\Api\Admin\StaffApplicationController as AdminStaffApplicationController;
 use App\Http\Controllers\Api\Admin\StaffController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Auth\EmailVerificationController;
+use App\Http\Controllers\Api\Auth\PasswordResetController;
+use App\Http\Controllers\Api\Auth\SocialAuthController;
 use App\Http\Controllers\Api\Customer\AppointmentController as CustomerAppointmentController;
 use App\Http\Controllers\Api\Customer\AvailabilityController;
 use App\Http\Controllers\Api\Customer\CustomerServiceController;
@@ -14,23 +17,30 @@ use App\Http\Controllers\Api\Customer\DashboardController as CustomerDashboardCo
 use App\Http\Controllers\Api\Staff\AppointmentController as StaffAppointmentController;
 use App\Http\Controllers\Api\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Api\Staff\DesignationController;
+use App\Http\Controllers\Api\Staff\ReviewController as StaffReviewController;
 use App\Http\Controllers\Api\Staff\StaffApplicationController;
 use App\Http\Controllers\Api\Staff\StaffProfileController;
 use App\Http\Controllers\Api\Staff\StaffServiceController;
 use App\Http\Controllers\Api\Staff\WorkingHourController;
-use App\Http\Controllers\Api\Staff\ReviewController as StaffReviewController;
 use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\Api\Auth\SocialAuthController;
 
 Route::get('auth/google/redirect', [SocialAuthController::class, 'googleRedirect']);
 Route::get('auth/google/callback', [SocialAuthController::class, 'googleCallback']);
 Route::get('auth/microsoft/redirect', [SocialAuthController::class, 'microsoftRedirect']);
 Route::get('auth/microsoft/callback', [SocialAuthController::class, 'microsoftCallback']);
 
-
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+
+// Password reset routes
+Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware('throttle:6,1');
+Route::post('reset-password', [PasswordResetController::class, 'reset']);
+
+// Email verification routes
+Route::get('email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
 Route::prefix('staff')->group(function () {
     Route::post('/apply', [StaffApplicationController::class, 'store']);
     Route::get('/designations', [DesignationController::class, 'index']);
@@ -38,7 +48,9 @@ Route::prefix('staff')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [AuthController::class, 'user']);
+    Route::put('user', [AuthController::class, 'updateProfile']);
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('email/verification-notification', [EmailVerificationController::class, 'resend'])->middleware('throttle:6,1');
 
     Route::prefix('admin')->middleware('admin')->group(function () {
 
