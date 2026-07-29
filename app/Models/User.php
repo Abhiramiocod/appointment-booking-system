@@ -58,11 +58,14 @@ class User extends Authenticatable implements MustVerifyEmail
     protected function casts(): array
     {
         return [
+            'email_verified_at' => 'datetime',
+            'created_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
             'provider' => AuthProvider::class,
         ];
     }
+
 
     public function isAdmin(): bool
     {

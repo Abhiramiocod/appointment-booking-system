@@ -50,10 +50,19 @@ class AuthController extends Controller
 
             // Local users check for email verification
             if (! $user->hasVerifiedEmail()) {
+                // Issue a token so they can authenticate to resend verification email or access unverified routes
+                $token = $user->createToken('unverified_api_token')->plainTextToken;
+
+                // Send email verification notification when trying to login
+                $user->sendEmailVerificationNotification();
+
                 return response()->json([
-                    'message' => 'Please verify your email.',
+                    'message' => 'Please verify your email address. A verification link has been sent to your email.',
+                    'token' => $token,
+                    'user' => new UserResource($user),
                 ], 403);
             }
+
 
             $token = $user->createToken('api_token')->plainTextToken;
 
