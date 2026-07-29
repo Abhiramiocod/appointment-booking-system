@@ -53,6 +53,19 @@ class User extends Authenticatable implements MustVerifyEmail
         'image',
         'provider',
         'provider_id',
+        'phone',
+        'dob',
+        'gender',
+        'address',
+        'city',
+        'state',
+        'country',
+        'postal_code',
+        'bio',
+        'preferred_contact_method',
+        'emergency_contact',
+        'medical_notes',
+        'preferred_language',
     ];
 
     protected function casts(): array
@@ -65,7 +78,6 @@ class User extends Authenticatable implements MustVerifyEmail
             'provider' => AuthProvider::class,
         ];
     }
-
 
     public function isAdmin(): bool
     {

@@ -2,75 +2,45 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Enums\UserRole;
+use App\Actions\Auth\ChangePasswordAction;
+use App\Actions\Auth\LoginUserAction;
+use App\Actions\Auth\Register\RegisterUserAction;
+use App\Actions\Auth\UpdateProfileAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request): JsonResponse
+    public function register(RegisterUserAction $action, RegisterRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-
-        $validated['role'] = UserRole::CUSTOMER;
-
-        $user = User::create($validated);
-
-        // Send email verification notification
-        $user->sendEmailVerificationNotification();
-
-        $token = $user->createToken('api_token')->plainTextToken;
+        $result = $action->execute($request->validated());
 
         return response()->json([
-            'user' => new UserResource($user),
-            'token' => $token,
-            'message' => 'Registration successful. Please check your email to verify your account.',
+            'user' => new UserResource($result['user']),
+            'token' => $result['token'],
+            'message' => $result['message'],
         ]);
     }
 
-    public function login(LoginRequest $request): JsonResponse
+    public function login(LoginUserAction $loginUserAction, LoginRequest $request): JsonResponse
     {
         try {
-            $validated = $request->validated();
-
-            if (! Auth::attempt($validated)) {
-                return response()->json([
-                    'message' => 'Invalid credentials',
-                ], 401);
-            }
-
-            $user = $request->user();
-
-            // Local users check for email verification
-            if (! $user->hasVerifiedEmail()) {
-                // Issue a token so they can authenticate to resend verification email or access unverified routes
-                $token = $user->createToken('unverified_api_token')->plainTextToken;
-
-                // Send email verification notification when trying to login
-                $user->sendEmailVerificationNotification();
-
-                return response()->json([
-                    'message' => 'Please verify your email address. A verification link has been sent to your email.',
-                    'token' => $token,
-                    'user' => new UserResource($user),
-                ], 403);
-            }
-
-
-            $token = $user->createToken('api_token')->plainTextToken;
+            $result = $loginUserAction->execute($request->validated());
 
             return response()->json([
-                'user' => new UserResource($user),
-                'token' => $token,
-            ]);
-        } catch (\Exception $e) {
+                'message' => $result['message'] ?? null,
+                'user' => $result['user'] ?? null,
+                'token' => $result['token'] ?? null,
+            ], $result['status']);
+        } catch (Throwable $e) {
             Log::error('Login failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -89,20 +59,24 @@ class AuthController extends Controller
         ]);
     }
 
-    public function updateProfile(Request $request): JsonResponse
+    public function updateProfile(UpdateProfileRequest $request, UpdateProfileAction $updateProfileAction): JsonResponse
     {
-        $user = $request->user();
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'alpha_dash', 'unique:users,username,'.$user->id],
-        ]);
-
-        $user->update($validated);
+        $user = $updateProfileAction->execute($request->user(), $request->validated());
 
         return response()->json([
             'user' => new UserResource($user),
-            'message' => 'Profile updated successfully',
+            'message' => 'Profile updated successfully!',
+        ]);
+    }
+
+    public function changePassword(ChangePasswordRequest $request, ChangePasswordAction $changePasswordAction): JsonResponse
+    {
+
+        $result = $changePasswordAction->execute($request->user(), $request->validated());
+
+        return response()->json([
+            'user' => new UserResource($result['user']),
+            'message' => $result['message'],
         ]);
     }
 

@@ -2,60 +2,50 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Actions\Auth\ResendEmailVerificationAction;
+use App\Actions\Auth\VerifyEmailAction;
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class EmailVerificationController extends Controller
 {
     /**
      * Mark the authenticated user's email address as verified from signed URL.
      */
-    public function verify(Request $request, string $id, string $hash): RedirectResponse
+    public function verify(string $id, string $hash, VerifyEmailAction $action): RedirectResponse
     {
-        $frontendUrl = config('app.frontend_url');
+        $frontendUrl = rtrim(config('app.frontend_url'), '/');
 
         try {
-            $user = User::findOrFail($id);
+            $result = $action->execute($id, $hash);
 
-            if (! hash_equals(sha1($user->getEmailForVerification()), (string) $hash)) {
-                $errorUrl = rtrim($frontendUrl, '/').'/verify-email?error='.urlencode('Invalid verification link.');
+            $path = $result['success'] ? 'verify-success' : 'verify-email';
+            $key = $result['success'] ? 'status' : 'error';
 
-                return redirect()->away($errorUrl);
-            }
-
-            if ($user->hasVerifiedEmail()) {
-                $successUrl = rtrim($frontendUrl, '/').'/verify-success?status='.urlencode('Email already verified.');
-
-                return redirect()->away($successUrl);
-            }
-
-            if ($user->markEmailAsVerified()) {
-                event(new Verified($user));
-            }
-
-            $successUrl = rtrim($frontendUrl, '/').'/verify-success?status='.urlencode('Email verified successfully.');
-
-            return redirect()->away($successUrl);
-        } catch (\Exception $e) {
+            return redirect()->away(
+                "{$frontendUrl}/{$path}?{$key}=".urlencode($result['message'])
+            );
+        } catch (Throwable $e) {
             Log::error('Email verification failed', [
+                'user_id' => $id,
                 'error' => $e->getMessage(),
             ]);
 
-            $errorUrl = rtrim($frontendUrl, '/').'/verify-email?error='.urlencode('Verification failed or expired.');
-
-            return redirect()->away($errorUrl);
+            return redirect()->away(
+                "{$frontendUrl}/verify-email?error=".
+                    urlencode('Verification failed or expired.')
+            );
         }
     }
 
     /**
      * Resend the email verification notification.
      */
-    public function resend(Request $request): JsonResponse
+    public function resend(Request $request, ResendEmailVerificationAction $action): JsonResponse
     {
         try {
             $user = $request->user();
@@ -66,19 +56,14 @@ class EmailVerificationController extends Controller
                 ], 401);
             }
 
-            if ($user->hasVerifiedEmail()) {
-                return response()->json([
-                    'message' => 'Email is already verified.',
-                ], 400);
-            }
-
-            $user->sendEmailVerificationNotification();
+            $result = $action->execute($user);
 
             return response()->json([
-                'message' => 'Verification link sent to your email.',
-            ]);
-        } catch (\Exception $e) {
+                'message' => $result['message'],
+            ], $result['status']);
+        } catch (Throwable $e) {
             Log::error('Resend email verification failed', [
+                'user_id' => $request->user()?->id,
                 'error' => $e->getMessage(),
             ]);
 

@@ -16,6 +16,9 @@ class StaffProfile extends Model
         'experience_years',
         'employment_status',
         'profile_photo',
+        'specialization',
+        'license_number',
+        'working_since',
     ];
 
     protected $casts = [
