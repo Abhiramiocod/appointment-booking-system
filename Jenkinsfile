@@ -1,51 +1,23 @@
-pipeline {
-    agent any
+stage('Deploy') {
+    steps {
+        sh """
+ssh -o StrictHostKeyChecking=no ubuntu@${APP_SERVER} <<'EOF'
+set -e
 
-    environment {
-        APP_SERVER = "13.232.226.58"
-        APP_PATH = "/var/www/appointment-booking-system"
-    }
+cd ${APP_PATH}
 
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
+git pull origin main
 
-        stage('Deploy') {
-            steps {
-                sh """
-                ssh -o StrictHostKeyChecking=no ubuntu@${APP_SERVER} << 'EOF'
-                set -e
+composer install --no-dev --optimize-autoloader
 
-                cd ${APP_PATH}
+php artisan migrate --force
 
-                git pull origin main
+php artisan optimize:clear
+php artisan optimize
 
-                composer install --no-dev --optimize-autoloader
-
-                php artisan migrate --force
-
-                php artisan optimize:clear
-                php artisan optimize
-
-                sudo systemctl restart php8.5-fpm
-                sudo systemctl reload nginx
-
-                EOF
-                """
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Deployment completed successfully.'
-        }
-
-        failure {
-            echo 'Deployment failed.'
-        }
+sudo systemctl restart php8.5-fpm
+sudo systemctl reload nginx
+EOF
+"""
     }
 }
