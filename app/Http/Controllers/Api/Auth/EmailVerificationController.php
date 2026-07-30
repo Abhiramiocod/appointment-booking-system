@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Actions\Auth\ResendEmailVerificationAction;
-use App\Actions\Auth\VerifyEmailAction;
+use App\actions\Auth\ResendEmailVerificationAction;
+use App\actions\Auth\VerifyEmailAction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;

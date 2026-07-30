@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Auth\Register;
+namespace App\actions\Auth\Register;
 
 use App\Enums\UserRole;
 use App\Models\User;

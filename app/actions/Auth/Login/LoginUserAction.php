@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Auth;
+namespace App\actions\Auth\Login;
 
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Auth;
+namespace App\actions\Auth;
 
 use App\Models\User;
 use Illuminate\Http\UploadedFile;

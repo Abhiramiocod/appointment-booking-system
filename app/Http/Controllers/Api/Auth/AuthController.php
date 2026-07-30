@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Actions\Auth\ChangePasswordAction;
-use App\Actions\Auth\LoginUserAction;
-use App\Actions\Auth\Register\RegisterUserAction;
-use App\Actions\Auth\UpdateProfileAction;
+use App\actions\Auth\ChangePasswordAction;
+use App\actions\Auth\Login\LoginUserAction;
+use App\actions\Auth\Register\RegisterUserAction;
+use App\actions\Auth\UpdateProfileAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
