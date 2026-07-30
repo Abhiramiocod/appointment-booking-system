@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        APP_SERVER = "13.232.226.58"
+        APP_SERVER = "bookly-appointment.duckdns.org"
         APP_PATH = "/var/www/appointment-booking-system"
     }
 
