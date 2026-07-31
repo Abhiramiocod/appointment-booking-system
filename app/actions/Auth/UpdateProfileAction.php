@@ -4,43 +4,54 @@ namespace App\actions\Auth;
 
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class UpdateProfileAction
 {
     public function execute(User $user, array $validated): User
     {
-        $this->handleAvatar($user, $validated);
+        return DB::transaction(function () use ($user, $validated) {
+            $this->handleAvatar($user, $validated);
 
-        // Prevent OAuth users from changing their email
-        if (in_array($this->getProvider($user), ['google', 'microsoft'])) {
-            unset($validated['email']);
-        }
+            // Prevent OAuth users from changing their email
+            if (in_array($this->getProvider($user), ['google', 'microsoft'])) {
+                unset($validated['email']);
+            }
 
-        // Remove avatar fields before updating user
-        unset($validated['avatar'], $validated['remove_avatar']);
+            // Remove avatar fields before updating user
+            unset($validated['avatar'], $validated['remove_avatar']);
 
-        $user->update($validated);
+            $user->update($validated);
 
-        if ($user->isStaff()) {
-            $this->updateStaffProfile($user, $validated);
-        }
+            if ($user->isStaff()) {
+                $this->updateStaffProfile($user, $validated);
+            }
 
-        return $user->fresh([
-            'staffProfile.designation',
-        ]);
+            return $user->fresh([
+                'staffProfile.designation',
+            ]);
+        });
     }
 
     private function handleAvatar(User $user, array &$validated): void
     {
-        if (! empty($validated['remove_avatar'])) {
+        $diskName = config('filesystems.default', 's3');
+        $disk = Storage::disk($diskName);
 
-            if (
-                $user->image &&
-                ! str_starts_with($user->image, 'http') &&
-                Storage::disk('s3')->exists($user->image)
-            ) {
-                Storage::disk('s3')->delete($user->image);
+        if (! empty($validated['remove_avatar'])) {
+            if ($user->image && ! str_starts_with($user->image, 'http')) {
+                try {
+                    if ($disk->exists($user->image)) {
+                        $disk->delete($user->image);
+                    }
+                } catch (\Exception $e) {
+                    Log::error("Failed deleting user avatar from storage disk [{$diskName}]: ".$e->getMessage(), [
+                        'user_id' => $user->id,
+                        'image' => $user->image,
+                    ]);
+                }
             }
 
             $user->image = null;
@@ -53,19 +64,40 @@ class UpdateProfileAction
             isset($validated['avatar']) &&
             $validated['avatar'] instanceof UploadedFile
         ) {
+            $oldImage = $user->image;
 
-            if (
-                $user->image &&
-                ! str_starts_with($user->image, 'http') &&
-                Storage::disk('s3')->exists($user->image)
-            ) {
-                Storage::disk('s3')->delete($user->image);
+            try {
+                // Upload new image to disk (avatars directory)
+                $path = $validated['avatar']->store('avatars', $diskName);
+
+                if (! $path) {
+                    throw new \RuntimeException("Storage disk [{$diskName}] failed to return path.");
+                }
+
+                // Delete old image if upload succeeded
+                if ($oldImage && ! str_starts_with($oldImage, 'http')) {
+                    try {
+                        if ($disk->exists($oldImage)) {
+                            $disk->delete($oldImage);
+                        }
+                    } catch (\Exception $e) {
+                        Log::warning("Failed deleting old user avatar from disk [{$diskName}]: ".$e->getMessage(), [
+                            'user_id' => $user->id,
+                            'old_image' => $oldImage,
+                        ]);
+                    }
+                }
+
+                $user->image = $path;
+                $user->save();
+            } catch (\Exception $e) {
+                Log::error("Failed uploading user avatar to storage disk [{$diskName}]: ".$e->getMessage(), [
+                    'user_id' => $user->id,
+                    'exception' => $e,
+                ]);
+
+                throw $e;
             }
-
-            $path = $validated['avatar']->store('avatars', 's3');
-
-            $user->image = $path;
-            $user->save();
         }
     }
 

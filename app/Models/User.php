@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 #[Fillable(['name', 'email', 'password'])]
@@ -22,6 +24,26 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
+
+    protected static function booted(): void
+    {
+        static::deleting(function (User $user) {
+            if ($user->image && ! str_starts_with($user->image, 'http')) {
+                $diskName = config('filesystems.default', 's3');
+                $disk = Storage::disk($diskName);
+                try {
+                    if ($disk->exists($user->image)) {
+                        $disk->delete($user->image);
+                    }
+                } catch (\Exception $e) {
+                    Log::warning("Failed deleting avatar on user deletion: {$e->getMessage()}", [
+                        'user_id' => $user->id,
+                        'image' => $user->image,
+                    ]);
+                }
+            }
+        });
+    }
 
     /**
      * Send the password reset notification.
