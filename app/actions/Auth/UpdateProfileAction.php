@@ -38,9 +38,9 @@ class UpdateProfileAction
             if (
                 $user->image &&
                 ! str_starts_with($user->image, 'http') &&
-                Storage::disk('public')->exists($user->image)
+                Storage::disk('s3')->exists($user->image)
             ) {
-                Storage::disk('public')->delete($user->image);
+                Storage::disk('s3')->delete($user->image);
             }
 
             $user->image = null;
@@ -57,12 +57,12 @@ class UpdateProfileAction
             if (
                 $user->image &&
                 ! str_starts_with($user->image, 'http') &&
-                Storage::disk('public')->exists($user->image)
+                Storage::disk('s3')->exists($user->image)
             ) {
-                Storage::disk('public')->delete($user->image);
+                Storage::disk('s3')->delete($user->image);
             }
 
-            $path = $validated['avatar']->store('avatars', 'public');
+            $path = $validated['avatar']->store('avatars', 's3');
 
             $user->image = $path;
             $user->save();

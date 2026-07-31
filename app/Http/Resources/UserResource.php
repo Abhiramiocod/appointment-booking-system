@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class UserResource extends JsonResource
 {
@@ -13,7 +14,7 @@ class UserResource extends JsonResource
         if ($this->image) {
             $imageUrl = str_starts_with($this->image, 'http')
                 ? $this->image
-                : asset('storage/'.$this->image);
+                : Storage::disk(config('filesystems.default', 's3'))->url($this->image);
         }
 
         return [

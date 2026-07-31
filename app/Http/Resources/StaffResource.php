@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class StaffResource extends JsonResource
 {
@@ -21,7 +22,9 @@ class StaffResource extends JsonResource
 
             'role' => $this->role->value,
 
-            'image' => $this->image ? asset($this->image) : null,
+            'image' => $this->image
+                ? (str_starts_with($this->image, 'http') ? $this->image : Storage::disk(config('filesystems.default', 's3'))->url($this->image))
+                : null,
 
             'created_at' => $this->created_at?->toDateTimeString(),
 
