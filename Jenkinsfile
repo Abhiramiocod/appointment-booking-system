@@ -16,25 +16,25 @@ pipeline {
         stage('Deploy') {
             steps {
                 sshagent(credentials: ['laravel-server-key']) {
-                    sh '''
-ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@'"${APP_SERVER}"' <<EOF
-set -e
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@${APP_SERVER} "
+                            set -e
 
-cd '"${APP_PATH}"'
+                            cd ${APP_PATH}
 
-git pull origin main
+                            git pull origin main
 
-composer install --no-dev --optimize-autoloader
+                            composer install --no-dev --optimize-autoloader
 
-php artisan migrate --force
+                            php artisan migrate --force
 
-php artisan optimize:clear
-php artisan optimize
+                            php artisan optimize:clear
+                            php artisan optimize
 
-sudo systemctl restart php8.5-fpm
-sudo systemctl reload nginx
-EOF
-'''
+                            sudo systemctl restart php8.5-fpm
+                            sudo systemctl reload nginx
+                        "
+                    """
                 }
             }
         }
