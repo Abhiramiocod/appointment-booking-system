@@ -22,6 +22,8 @@ class CancelAppointmentAction
             actionUrl: '/customer/schedule'
         );
 
+        \App\Jobs\SyncGoogleCalendarEventJob::dispatch($appointment->id, 'delete');
+
         return $appointment;
     }
 }
