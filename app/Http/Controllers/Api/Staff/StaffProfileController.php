@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\Staff;
 
+use App\actions\Staff\Profile\ChangeStaffPasswordAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Staffs\ChangeStaffPasswordRequest;
 use App\Http\Requests\Staffs\StoreStaffProfileRequest;
 use App\Http\Requests\Staffs\UpdateStaffProfileRequest;
 use App\Http\Resources\StaffProfileResource;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class StaffProfileController extends Controller
 {
@@ -47,27 +48,24 @@ class StaffProfileController extends Controller
         return new StaffProfileResource($profile);
     }
 
-    public function changePassword(Request $request): JsonResponse
-    {
-        $request->validate([
-            'current_password' => ['required', 'string'],
-            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+    public function changePassword(
+        ChangeStaffPasswordRequest $request,
+        ChangeStaffPasswordAction $action
+    ): JsonResponse {
+        try {
+            $action->execute(
+                $request->user(),
+                $request->current_password,
+                $request->new_password
+            );
 
-        $user = auth()->user();
-
-        if (! Hash::check($request->current_password, $user->password)) {
             return response()->json([
-                'message' => 'The current password you entered is incorrect.',
-            ], 422);
+                'message' => 'Password changed successfully.',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], $e->getCode() ?: 422);
         }
-
-        $user->update([
-            'password' => Hash::make($request->new_password),
-        ]);
-
-        return response()->json([
-            'message' => 'Password changed successfully.',
-        ]);
     }
 }

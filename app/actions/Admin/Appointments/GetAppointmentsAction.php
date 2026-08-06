@@ -56,12 +56,12 @@ class GetAppointmentsAction
                         $q->whereHas('customer', function ($customer) use ($search) {
                             $customer->where('name', 'ILIKE', "%{$search}%");
                         })
-                        ->orWhereHas('staff', function ($staff) use ($search) {
-                            $staff->where('name', 'ILIKE', "%{$search}%");
-                        })
-                        ->orWhereHas('service', function ($service) use ($search) {
-                            $service->where('name', 'ILIKE', "%{$search}%");
-                        });
+                            ->orWhereHas('staff', function ($staff) use ($search) {
+                                $staff->where('name', 'ILIKE', "%{$search}%");
+                            })
+                            ->orWhereHas('service', function ($service) use ($search) {
+                                $service->where('name', 'ILIKE', "%{$search}%");
+                            });
                     });
                 }
             )

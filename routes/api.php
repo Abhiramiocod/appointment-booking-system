@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\Customer\AvailabilityController;
 use App\Http\Controllers\Api\Customer\CustomerServiceController;
 use App\Http\Controllers\Api\Customer\DashboardController as CustomerDashboardController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\RazorpayPaymentController;
 use App\Http\Controllers\Api\Staff\AppointmentController as StaffAppointmentController;
 use App\Http\Controllers\Api\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Api\Staff\DesignationController;
@@ -23,12 +24,10 @@ use App\Http\Controllers\Api\Staff\StaffApplicationController;
 use App\Http\Controllers\Api\Staff\StaffProfileController;
 use App\Http\Controllers\Api\Staff\StaffServiceController;
 use App\Http\Controllers\Api\Staff\WorkingHourController;
-use App\Http\Controllers\Api\RazorpayPaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('create-order', [RazorpayPaymentController::class, 'createOrder'])->middleware('auth:sanctum');
 Route::post('verify-payment', [RazorpayPaymentController::class, 'verifyPayment'])->middleware('auth:sanctum');
-
 
 Route::get('auth/google/redirect', [SocialAuthController::class, 'googleRedirect']);
 Route::get('auth/google/callback', [SocialAuthController::class, 'googleCallback']);

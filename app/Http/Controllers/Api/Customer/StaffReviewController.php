@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Api\Customer;
 
+use App\actions\Customer\StaffReview\CreateStaffReviewAction;
+use App\actions\Customer\StaffReview\DeleteStaffReviewAction;
+use App\actions\Customer\StaffReview\UpdateStaffReviewAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\Reviews\StoreStaffReviewRequest;
 use App\Http\Requests\Customer\Reviews\UpdateStaffReviewRequest;
 use App\Models\Appointment;
 use App\Models\StaffReview;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 class StaffReviewController extends Controller
@@ -16,41 +20,25 @@ class StaffReviewController extends Controller
      */
     public function store(
         StoreStaffReviewRequest $request,
-        Appointment $appointment
+        Appointment $appointment,
+        CreateStaffReviewAction $action
     ): JsonResponse {
-        // Customer can only review their own appointment
-        if ($appointment->customer_id !== auth()->id()) {
+        try {
+            $review = $action->execute(
+                $appointment,
+                $request->user(),
+                $request->validated()
+            );
+
             return response()->json([
-                'message' => 'Unauthorized.',
-            ], 403);
-        }
-
-        // Appointment must be completed
-        if ($appointment->status !== 'completed') {
+                'message' => 'Review submitted successfully.',
+                'data' => $review,
+            ], 201);
+        } catch (Exception $e) {
             return response()->json([
-                'message' => 'You can only review completed appointments.',
-            ], 422);
+                'message' => $e->getMessage(),
+            ], $e->getCode() ?: 422);
         }
-
-        // Prevent duplicate reviews
-        if ($appointment->review()->exists()) {
-            return response()->json([
-                'message' => 'You have already reviewed this appointment.',
-            ], 422);
-        }
-
-        $review = StaffReview::create([
-            'appointment_id' => $appointment->id,
-            'staff_id' => $appointment->staff_id,
-            'customer_id' => auth()->id(),
-            'rating' => $request->rating,
-            'review' => $request->review,
-        ]);
-
-        return response()->json([
-            'message' => 'Review submitted successfully.',
-            'data' => $review,
-        ], 201);
     }
 
     /**
@@ -58,41 +46,44 @@ class StaffReviewController extends Controller
      */
     public function update(
         UpdateStaffReviewRequest $request,
-        StaffReview $review
+        StaffReview $review,
+        UpdateStaffReviewAction $action
     ): JsonResponse {
-        if ($review->customer_id !== auth()->id()) {
+        try {
+            $updatedReview = $action->execute(
+                $review,
+                $request->user(),
+                $request->validated()
+            );
+
             return response()->json([
-                'message' => 'Unauthorized.',
-            ], 403);
+                'message' => 'Review updated successfully.',
+                'data' => $updatedReview,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], $e->getCode() ?: 422);
         }
-
-        $review->update([
-            'rating' => $request->rating,
-            'review' => $request->review,
-        ]);
-
-        return response()->json([
-            'message' => 'Review updated successfully.',
-            'data' => $review->fresh(),
-        ]);
     }
 
     /**
      * Delete a review.
      */
     public function destroy(
-        StaffReview $review
+        StaffReview $review,
+        DeleteStaffReviewAction $action
     ): JsonResponse {
-        if ($review->customer_id !== auth()->id()) {
+        try {
+            $action->execute($review, request()->user());
+
             return response()->json([
-                'message' => 'Unauthorized.',
-            ], 403);
+                'message' => 'Review deleted successfully.',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], $e->getCode() ?: 422);
         }
-
-        $review->delete();
-
-        return response()->json([
-            'message' => 'Review deleted successfully.',
-        ]);
     }
 }

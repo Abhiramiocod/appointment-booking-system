@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 
 class AnalyticsController extends Controller
-
 {
     public function index(GetAnalyticsAction $action): JsonResponse
     {

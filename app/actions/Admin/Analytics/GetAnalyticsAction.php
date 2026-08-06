@@ -39,7 +39,7 @@ class GetAnalyticsAction
         // Top Services
         $topServices = Appointment::select('service_id', DB::raw('COUNT(*) as bookings_count'))
             ->with([
-                'service:id,name,price'
+                'service:id,name,price',
             ])
             ->groupBy('service_id')
             ->orderByDesc('bookings_count')
@@ -57,7 +57,7 @@ class GetAnalyticsAction
         // Staff Performance
         $staffPerformance = User::where('role', UserRole::STAFF)
             ->withCount([
-                'staffAppointments as bookings_count'
+                'staffAppointments as bookings_count',
             ])
             ->withAvg('receivedReviews as avg_rating', 'rating')
             ->get()
