@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('day_of_week');
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
+            $table->json('breaks')->nullable();
             $table->boolean('is_available')->default(true);
             $table->timestamps();
             $table->unique(['staff_id', 'day_of_week']);

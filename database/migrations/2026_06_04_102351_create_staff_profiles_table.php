@@ -20,6 +20,9 @@ return new class extends Migration
             $table->integer('experience_years')->nullable();
             $table->string('profile_photo')->nullable();
             $table->string('employment_status')->nullable();
+            $table->string('specialization')->nullable();
+            $table->string('license_number')->nullable();
+            $table->date('working_since')->nullable();
             $table->timestamps();
         });
     }

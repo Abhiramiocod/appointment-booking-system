@@ -13,15 +13,8 @@ return new class extends Migration
     {
         Schema::create('designation_service', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('designation_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
-            $table->foreignId('service_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
+            $table->foreignId('designation_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('service_id')->constrained()->cascadeOnDelete();
             $table->unique(['designation_id', 'service_id']);
         });
     }

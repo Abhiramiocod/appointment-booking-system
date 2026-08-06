@@ -22,6 +22,10 @@ return new class extends Migration
             $table->time('end_time');
             $table->string('status')->default(AppointmentStatus::PENDING->value);
             $table->text('notes')->nullable();
+            $table->text('rejection_reason')->nullable();
+            $table->date('proposed_date')->nullable();
+            $table->time('proposed_time')->nullable();
+            $table->text('proposed_note')->nullable();
             $table->timestamps();
             $table->index(['staff_id', 'appointment_date']);
             $table->index(['customer_id', 'appointment_date']);

@@ -23,7 +23,12 @@ use App\Http\Controllers\Api\Staff\StaffApplicationController;
 use App\Http\Controllers\Api\Staff\StaffProfileController;
 use App\Http\Controllers\Api\Staff\StaffServiceController;
 use App\Http\Controllers\Api\Staff\WorkingHourController;
+use App\Http\Controllers\Api\RazorpayPaymentController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('create-order', [RazorpayPaymentController::class, 'createOrder'])->middleware('auth:sanctum');
+Route::post('verify-payment', [RazorpayPaymentController::class, 'verifyPayment'])->middleware('auth:sanctum');
+
 
 Route::get('auth/google/redirect', [SocialAuthController::class, 'googleRedirect']);
 Route::get('auth/google/callback', [SocialAuthController::class, 'googleCallback']);

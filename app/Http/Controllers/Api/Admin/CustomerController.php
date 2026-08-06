@@ -13,7 +13,7 @@ class CustomerController extends Controller
     {
         $search = $request->input('search');
         $minBookings = $request->input('min_bookings');
-        $sortBy = $request->input('sort_by', 'name'); // 'name', 'bookings_count', 'created_at'
+        $sortBy = $request->input('sort_by', 'name');
 
         return User::query()
             ->where('role', UserRole::CUSTOMER)
