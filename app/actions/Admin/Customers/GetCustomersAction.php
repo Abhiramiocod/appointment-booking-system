@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Admin\Customer;
+namespace App\Actions\Admin\Customers;
 
 use App\Enums\UserRole;
 use App\Models\User;

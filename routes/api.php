@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Customer\AppointmentController as CustomerAppointme
 use App\Http\Controllers\Api\Customer\AvailabilityController;
 use App\Http\Controllers\Api\Customer\CustomerServiceController;
 use App\Http\Controllers\Api\Customer\DashboardController as CustomerDashboardController;
+use App\Http\Controllers\Api\GoogleCalendarController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\RazorpayPaymentController;
 use App\Http\Controllers\Api\Staff\AppointmentController as StaffAppointmentController;
@@ -33,6 +34,9 @@ Route::get('auth/google/redirect', [SocialAuthController::class, 'googleRedirect
 Route::get('auth/google/callback', [SocialAuthController::class, 'googleCallback']);
 Route::get('auth/microsoft/redirect', [SocialAuthController::class, 'microsoftRedirect']);
 Route::get('auth/microsoft/callback', [SocialAuthController::class, 'microsoftCallback']);
+
+Route::get('calendar/google/connect', [GoogleCalendarController::class, 'connect']);
+Route::get('calendar/google/callback', [GoogleCalendarController::class, 'callback']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -63,6 +67,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/all', [NotificationController::class, 'indexAll']);
         Route::post('{notification}/read', [NotificationController::class, 'markAsRead']);
         Route::post('read-all', [NotificationController::class, 'markAllAsRead']);
+    });
+
+    Route::prefix('calendar/google')->group(function () {
+        Route::get('status', [GoogleCalendarController::class, 'status']);
+        Route::delete('disconnect', [GoogleCalendarController::class, 'disconnect']);
     });
 
     Route::prefix('admin')->middleware('admin')->group(function () {

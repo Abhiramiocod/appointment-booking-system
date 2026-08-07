@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Admin\StaffApplication;
+namespace App\Actions\Admin\StaffApplications;
 
 use App\Enums\StaffApplicationStatus;
 use App\Models\StaffApplication;

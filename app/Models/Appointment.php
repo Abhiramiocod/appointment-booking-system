@@ -21,6 +21,7 @@ class Appointment extends Model
         'proposed_date',
         'proposed_time',
         'proposed_note',
+        'google_calendar_event_id',
     ];
 
     protected function casts(): array

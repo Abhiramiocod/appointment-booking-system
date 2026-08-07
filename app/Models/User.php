@@ -160,4 +160,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Notification::class);
     }
+
+    public function googleCalendarAccount()
+    {
+        return $this->hasOne(GoogleCalendarAccount::class);
+    }
 }
