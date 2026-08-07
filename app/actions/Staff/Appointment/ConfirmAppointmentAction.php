@@ -3,6 +3,7 @@
 namespace App\actions\Staff\Appointment;
 
 use App\Enums\AppointmentStatus;
+use App\Jobs\SyncGoogleCalendarEventJob;
 use App\Models\Appointment;
 use App\Services\NotificationService;
 use Exception;
@@ -30,6 +31,8 @@ class ConfirmAppointmentAction
             type: 'appointment',
             actionUrl: '/customer/schedule'
         );
+
+        SyncGoogleCalendarEventJob::dispatch($appointment->id, 'create');
 
         return $appointment;
     }

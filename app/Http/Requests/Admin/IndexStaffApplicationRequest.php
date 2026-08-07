@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\StaffApplication;
+namespace App\Http\Requests\Admin;
 
 use App\Enums\StaffApplicationStatus;
 use Illuminate\Foundation\Http\FormRequest;

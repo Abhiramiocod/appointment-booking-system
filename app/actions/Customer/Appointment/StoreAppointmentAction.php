@@ -75,8 +75,6 @@ class StoreAppointmentAction
             actionUrl: '/staff/appointments'
         );
 
-        \App\Jobs\SyncGoogleCalendarEventJob::dispatch($appointment->id, 'create');
-
         return $appointment;
     }
 }

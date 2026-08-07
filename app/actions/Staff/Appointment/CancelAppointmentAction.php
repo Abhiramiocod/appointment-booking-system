@@ -3,6 +3,7 @@
 namespace App\actions\Staff\Appointment;
 
 use App\Enums\AppointmentStatus;
+use App\Jobs\SyncGoogleCalendarEventJob;
 use App\Models\Appointment;
 use App\Services\NotificationService;
 
@@ -22,7 +23,7 @@ class CancelAppointmentAction
             actionUrl: '/customer/schedule'
         );
 
-        \App\Jobs\SyncGoogleCalendarEventJob::dispatch($appointment->id, 'delete');
+        SyncGoogleCalendarEventJob::dispatch($appointment->id, 'delete');
 
         return $appointment;
     }

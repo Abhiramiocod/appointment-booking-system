@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\Actions\Admin\StaffApplication\ApproveStaffApplicationAction;
-use App\Actions\Admin\StaffApplication\GetStaffApplicationsAction;
-use App\Actions\Admin\StaffApplication\RejectStaffApplicationAction;
+use App\Actions\Admin\StaffApplications\ApproveStaffApplicationAction;
+use App\Actions\Admin\StaffApplications\GetStaffApplicationsAction;
+use App\Actions\Admin\StaffApplications\RejectStaffApplicationAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\StaffApplication\IndexStaffApplicationRequest;
-use App\Http\Requests\Admin\StaffApplication\RejectStaffApplicationRequest;
+use App\Http\Requests\Admin\IndexStaffApplicationRequest;
+use App\Http\Requests\Admin\RejectStaffApplicationRequest;
 use App\Http\Resources\StaffApplicationResource;
 use App\Models\StaffApplication;
 use Illuminate\Support\Facades\Gate;
